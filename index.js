@@ -79,14 +79,13 @@ app.post('/register', async (req, res) => {
   }
 
   try {
-    const query =
-    `INSERT INTO beneficiary
+    const query =`
+      INSERT INTO beneficiary
       (email, password, fname, mname, lname, ration_no, city, street, state, pincode, dob, gender, member_count) 
       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `;
     await db.query(query, [email, password, fname, mname, lname, ration_no, city, street, state, pincode, dob, gender, member_count]);
     res.send('User registered successfully!');
-    
   } catch (err) {
     console.error('Error inserting data:', err);
     res.status(500).send('Database error');
