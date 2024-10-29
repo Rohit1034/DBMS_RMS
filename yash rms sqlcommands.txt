@@ -1,32 +1,19 @@
 yash rms
 
 
-CREATE TABLE beni (
-  benID CHAR(10) NOT NULL,
-  Fname CHAR(10) NOT NULL,
-  Mname CHAR(10) NOT NULL,
-  Lname CHAR(10) NOT NULL,
-  Aadhar INT UNIQUE,
-  DOB DATE,
-  cardNo INT,
-  cardType CHAR(10),
-  email VARCHAR(50) UNIQUE,
-  password VARCHAR(30)
+CREATE TABLE beneficiary (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    email VARCHAR(100) NOT NULL UNIQUE,
+    password VARCHAR(255) NOT NULL,
+    fname VARCHAR(50) NOT NULL,
+    mname VARCHAR(50),
+    lname VARCHAR(50) NOT NULL,
+    ration_no VARCHAR(20) NOT NULL UNIQUE,
+    city VARCHAR(50) NOT NULL,
+    street VARCHAR(100) NOT NULL,
+    state VARCHAR(50) NOT NULL,
+    pincode VARCHAR(10) NOT NULL,
+    dob DATE NOT NULL,
+    gender CHAR(1) NOT NULL CHECK (gender IN ('M', 'F', 'O')),
+    member_count INT NOT NULL CHECK (member_count > 0)
 );
-
-
-INSERT INTO beni VALUES ("u1", "Rohit", "Ratan", "Patil", 567890, "2004-03-10", 1234, "Yellow", "rogitgmail", "1034");
-
-
-INSERT INTO beni VALUES ("u2", "Yash", "Ratan", "Patil", 567897, "2004-04-10", 4321, "Yellow", "yash.patil23@spit.ac.in", "yash.patil_@11");
-
-INSERT INTO beni VALUES ("u3", "Shreesh", "Ratan", "Patil", 567891, "2004-05-22", 4532, "Yellow", "shreesh.patil@spit.ac.in", "shreesh_@11");
-
-INSERT INTO beni VALUES ("u4", "Aanvi", "Ratan", "kaotlapure", 567892, "2004-06-01", 2123, "Yellow", "aanvi_ktalpure@gmail.com", "Aanvi_@23");
-
-INSERT INTO beni VALUES ("u5", "Nitesh", "Ratan", "yadav", 567893, "2004-07-12", 7777, "Yellow", "niteshAgmail.com", "nitya_yadav10");
-
-INSERT INTO beni VALUES ("u5", "Dinesh", "Sambhaji", "Patil", 567894, "1997-05-31", 1234, "Yellow", "dinesh.patil@gmail.com", "dinu_@40");
-
-INSERT INTO beni VALUES ("u6", "Nirmala", "Sambhaji", "Patil", 567895, "1975-06-10", 1234, "Yellow", "nirmala.patil@gmail.com", "nirmalNiketan");
-

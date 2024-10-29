@@ -1,130 +1,102 @@
+<!DOCTYPE html>
 <html lang="en">
 <head>
-	<meta charset="utf-8">
-	<meta name="author" content="Kodinger">
-	<meta name="viewport" content="width=device-width,initial-scale=1">
-	<title>new registration &mdash; Bootstrap 4 Login Page Snippet</title>
-	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-	<link rel="stylesheet"  href="../public/css/my-login.css">
+    <meta charset="utf-8">
+    <meta name="author" content="Kodinger">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>New Registration &mdash; Bootstrap 4 Login Page Snippet</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link rel="stylesheet" href="../public/css/my-login.css">
 </head>
 <body class="my-login-page" style="background-image: url(https://fatafatnews.com/wp-content/uploads/2024/08/22032023-1679475025-768x432.jpg);">
-	<section class="h-100 ">
-		<div class="container h-100 ">
-			<div class="row justify-content-md-center h-100">
-				<div class="card-wrapper ">
-					<div class="brand">
-						<img src="../public/assets/logo.jpg" alt="bootstrap 4 login page">
-					</div>
-					<div class="card fat">
-						<div class="card-body " style="background-color:rgb(237, 125, 27);">
-							<h4 class="card-title">Register</h4>
-							<form id = "register"  method="POST" class="my-login-validation" novalidate="">
-								<div class="form-group">
-									<label for="name">Name</label>
-									<div class="fullname">
-									<input id="fname" type="text" class="form-control" name="fname" placeholder="First name" style="background-color: blanchedalmond;">
-									<input id="mname" type="text" class="form-control" name="mname" placeholder="Middle name">
-									<input id="lname" type="text" class="form-control" name="lname" placeholder="Surname">
-								</div>
-								</div>
+    <section class="h-100">
+        <div class="container h-100">
+            <div class="row justify-content-md-center h-100">
+                <div class="card-wrapper">
+                    <div class="brand">
+                        <img src="../public/assets/logo.jpg" alt="bootstrap 4 login page">
+                    </div>
+                    <div class="card fat">
+                        <div class="card-body" style="background-color:rgb(237, 125, 27);">
+                            <h4 class="card-title">Register</h4>
+                            <form id="register" action="/register" method="POST" class="my-login-validation" novalidate="">
+                                <div class="form-group">
+                                    <label for="name">Name</label>
+                                    <div class="fullname">
+                                        <input id="fname" type="text" class="form-control" name="fname" placeholder="First name" style="background-color: blanchedalmond;" required>
+                                        <input id="mname" type="text" class="form-control" name="mname" placeholder="Middle name">
+                                        <input id="lname" type="text" class="form-control" name="lname" placeholder="Surname" required>
+                                    </div>
+                                </div>
 
-								<div class="form-group">
-									<label for="email">E-Mail Address</label>
-									<input id="email" type="email" class="form-control" name="email" placeholder="email-address">
-									
-								</div>
+                                <div class="form-group">
+                                    <label for="email">E-Mail Address</label>
+                                    <input id="email" type="email" class="form-control" name="email" placeholder="email-address" required>
+                                </div>
 
-								<div class="form-group">
-									<label for="password">Set Password</label>
-									<input id="password" type="password" class="form-control" name="password" placeholder="password">
-									
-								</div>
-								<div class="form-group">
-									<label for="ration_no">Ration Card number</label>
-									<input id="ration_no" type="text" class="form-control" name="ration_no" placeholder="Enter ration_card number">
-									
-								</div>
-								<div class="form-group">
-									<label for="Address">Address</label>
-									<div class="address ">
-									<input id="city" type="text" class="form-control" name="city" placeholder="city">
-									<input id="street" type="text" class="form-control" name="street" placeholder="street">
-									<input id="state" type="text" class="form-control" name="state" placeholder="state">
-									<input id="pincode" type="text" class="form-control" name="pincode" placeholder="pincode">
-									</div>
-								</div>
-								<div class="form-group">
-									<label for="dob">Date of Birth</label>
-									<input id="dob" type="text" class="form-control" name="dob" placeholder="dd-mm-yyyy">
-								</div>
-								
-								<div class="form-group">
-									<label for="gender">Gender</label>
-									<input id="gender" type="text" class="form-control" name="gender" placeholder="male/female">
-								</div>
-								<div class="form-group">
-									<label for="members">Number of Members</label>
-									<input id="member_count" type="text" class="form-control" name="member_count" placeholder="Number of member in family">
-								</div>
+                                <div class="form-group">
+                                    <label for="password">Set Password</label>
+                                    <input id="password" type="password" class="form-control" name="password" placeholder="password" required>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="ration_no">Ration Card Number</label>
+                                    <input id="ration_no" type="text" class="form-control" name="ration_no" placeholder="Enter ration card number" required>
+                                </div>
 
+                                <div class="form-group">
+                                    <label for="Address">Address</label>
+                                    <div class="address">
+                                        <input id="city" type="text" class="form-control" name="city" placeholder="City" required>
+                                        <input id="street" type="text" class="form-control" name="street" placeholder="Street" required>
+                                        <input id="state" type="text" class="form-control" name="state" placeholder="State" required>
+                                        <input id="pincode" type="text" class="form-control" name="pincode" placeholder="Pincode" required>
+                                    </div>
+                                </div>
 
-								<div class="form-group">
-									<div class="custom-checkbox custom-control">
-										<input type="checkbox" name="agree" id="agree" class="custom-control-input" required="">
-										<label for="agree" class="custom-control-label">I agree to the <a href = '/#'>terms and condition</a></label>
-										<div class="invalid-feedback">
-											You must agree with our Terms and Conditions
-										</div>
-									</div>
-								</div>
+                                <div class="form-group">
+                                    <label for="dob">Date of Birth</label>
+                                    <input id="dob" type="date" class="form-control" name="dob" required>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="gender">Gender</label>
+                                    <input id="gender" type="text" class="form-control" name="gender" placeholder="M/F" required>
+                                </div>
 
-								<div class="form-group m-0">
-									<button type="submit" class="btn btn-primary btn-block">
-										Register
-									</button>
-									
-								</div>
-								<div class="mt-4 text-center">
-									Already have an account? <a href = '/'>login here</a>
-								</div>
-							</form>
-							<script>
-								document.getElementById('register').addEventListener('submit', async (event) => {
-									event.preventDefault();
-									const fname = document.getElementById('fname').value;
-									const mname = document.getElementById('mname').value;
-									const lname = document.getElementById('lname').value;
-									const email = document.getElementById('emial').value;
-									const password = document.getElementById('password').value;
-									const ration_no = document.getElementById('ration_no').value;
-									const city = document.getElementById('city').value;
-									const street = document.getElementById('street').value;
-									const state = document.getElementById('state').value;
-									const pincode = document.getElementById('pincode').value;
-									const dob = document.getElementById('dob').value;
-									const gender = document.getElementById('gender').value;
-									const member_count = document.getElementById('member_count').value;
-									const response = await fetch ('/register', {
-										method: 'post',
-										headers: {
-											'content-type' : 'application/json',
-										}, 
-										body: JSON.stringify({fname, mname, lname, email, password, ration_no, city, street, state, pincode, dob, gender, member_count }), 
-									});
-									const result = await response.text();
-									alert(result);
-								});
-							</script>
-						</div>
-					</div>
-					
-				</div>
-			</div>
-		</div>
-	</section>
+                                <div class="form-group">
+                                    <label for="members">Number of Members</label>
+                                    <input id="member_count" type="number" class="form-control" name="member_count" placeholder="Number of members in family" required>
+                                </div>
 
-	<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
-	<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
-	<script src="../index.js"></script>
+                                <div class="form-group">
+                                    <div class="custom-checkbox custom-control">
+                                        <input type="checkbox" name="agree" id="agree" class="custom-control-input" required>
+                                        <label for="agree" class="custom-control-label">I agree to the <a href='/#'>terms and conditions</a></label>
+                                        <div class="invalid-feedback">
+                                            You must agree with our Terms and Conditions.
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="form-group m-0">
+                                    <button type="submit" class="btn btn-primary btn-block">
+                                        Register
+                                    </button>
+                                </div>
+                                <div class="mt-4 text-center">
+                                    Already have an account? <a href='/'>login here</a>
+                                </div>
+                            </form>
+                                                    </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+    <script src="../index.js"></script>
 </body>
 </html>
