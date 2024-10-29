@@ -86,10 +86,15 @@ app.post('/register', async (req, res) => {
     `;
     await db.query(query, [email, password, fname, mname, lname, ration_no, city, street, state, pincode, dob, gender, member_count]);
     res.send('User registered successfully!');
+    //req.setTimeout(2000);
+    res.sendFile(path.join(__dirname, 'view','login.html'));
   } catch (err) {
     console.error('Error inserting data:', err);
     res.status(500).send('Database error');
   }
+});
+app.get('/backToLogin', (req, res)=>{
+  res.sendFile(path.join(__dirname, 'view', 'backToLogin.html'));
 });
 app.get('/forgot', (req, res) => {
   res.sendFile(path.join(__dirname, 'view', 'forgot.html'));
