@@ -34,8 +34,6 @@ app.use((req, res, next) => {
 });
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'view', 'login.html'));
-  console.log(path.join(__dirname, 'view', 'login.html'));
-  console.log("GET request to /");
 });
 app.get('/fps',(req,res)=>{
   res.sendFile(path.join(__dirname, 'view', 'fps.html'));
@@ -121,6 +119,8 @@ app.post('/register', async (req, res) => {
       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
     await db.query(query, [email, password, fname, mname, lname, ration_no, city, street, state, pincode, dob, gender, member_count]);
     res.send('User registered successfully!');
+    //req.setTimeout(2000);
+    res.sendFile(path.join(__dirname, 'view','login.html'));
   } catch (err) {
     console.error('Error inserting data:', err);
     res.status(500).send('Database error');
@@ -155,6 +155,9 @@ app.post('/register_fps', async (req, res) => {
 });
 
 
+app.get('/backToLogin', (req, res)=>{
+  res.sendFile(path.join(__dirname, 'view', 'backToLogin.html'));
+});
 app.get('/forgot', (req, res) => {
   res.sendFile(path.join(__dirname, 'view', 'forgot.html'));
 });
