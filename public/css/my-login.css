@@ -7,10 +7,28 @@ body.my-login-page {
 	font-size: 14px;
 
 }
-
+.card-body{
+	background-color: white;
+	border-radius: 40px;
+}
 .my-login-page {
 	background-image: url(https://fatafatnews.com/wp-content/uploads/2024/08/22032023-1679475025-768x432.jpg);
 
+}
+.admin-button {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    padding: 8px 16px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.admin-button:hover {
+    background-color: #0056b3;
 }
 
 .my-login-page .brand {

@@ -9,42 +9,36 @@
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" 
           integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" 
           crossorigin="anonymous">
-    <link rel="stylesheet" type="text/css" href="/css/my-login.css"> <!-- Updated -->
+    <link rel="stylesheet" type="text/css" href="/css/my-login.css">
 </head>
 
 <body class="my-login-page">
     <section class="h-100 bg-ba">
-        <a class="admin-button" href="/fps" id="adminButton">FPS OWNER</a>
         <div class="container h-100">
             <div class="row justify-content-md-center h-100">
                 <div class="card-wrapper">
                     <div class="brand">
-                        <img src="/assets/logo.jpg" alt="logo"> <!-- Updated -->
+                        <img src="/public/assets/logo.jpg" alt="logo">
                     </div>
                     <div class="card-body">
                         <h4 class="card-title">Login</h4>
-                        <form id="loginForm" method="post" class="my-login-validation" action="/login" novalidate="">
+                        <form id="loginForm" method="post" class="my-login-validation" action="/fps-login" novalidate="">
                             <div class="form-group">
-                                <label for="email">E-Mail Address</label>
-                                <input id="email" type="email" class="form-control" name="email" required autofocus>
-                                <div class="invalid-feedback">Email is invalid</div>
+                                <label for="fps_id">FPS ID</label>
+                                <input id="fps_id" type="text" class="form-control" name="fps_id" required autofocus>
+                                <div class="invalid-feedback">FPS ID is invalid</div>
                             </div>
                             <div class="form-group">
                                 <label for="password">Password</label>
                                 <input id="password" type="password" class="form-control" name="password" required>
                                 <div class="invalid-feedback">Password is required</div>
                             </div>
-                            <div class="form-group">
-                                <div class="custom-checkbox custom-control">
-                                    <input type="checkbox" name="remember" id="remember" class="custom-control-input">
-                                    <label for="remember" class="custom-control-label">Remember Me</label>
-                                </div>
-                            </div>
+                            
                             <div class="form-group m-0">
                                 <button type="submit" class="btn btn-primary btn-block">Login</button>
                             </div>
                             <div class="mt-4 text-center">
-                                Don't have an account? <a href="/new">Create new</a>
+                                Don't have an account? <a href="/new_fps">Create new</a>
                             </div>
                         </form>
                     </div>
@@ -55,8 +49,8 @@
     
     <script>
         document.getElementById('adminButton').addEventListener('click', () => {
-            window.location.href = 'fps.html'; // Replace with your target page's path
-        });
+    window.location.href = '/admin.html'; // Replace with your target page's path
+});
 
         document.getElementById('loginForm').addEventListener('submit', async (event) => {
             event.preventDefault(); // Prevent form default submission behavior

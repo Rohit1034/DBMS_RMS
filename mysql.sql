@@ -17,6 +17,7 @@ CREATE TABLE beneficiary (
     gender CHAR(1) NOT NULL CHECK (gender IN ('M', 'F', 'O')),
     member_count INT NOT NULL CHECK (member_count > 0)
 );
+<<<<<<< HEAD:yash rms sqlcommands.txt
 
 create TABLE complaint (
     complaint_ID int primary key,
@@ -26,4 +27,19 @@ create TABLE complaint (
     date_complaint date , 
     time_complaint time,
     foreign key(ben_id) references beneficiary(ben_id)
+);
+=======
+CREATE TABLE fps (
+    fps_id INT AUTO_INCREMENT PRIMARY KEY,  -- fps_id is now auto-incremented
+    fname VARCHAR(255) NOT NULL,
+    mname VARCHAR(255) NOT NULL,
+    lname VARCHAR(255) NOT NULL,
+    password VARCHAR(255) NOT NULL,
+    contact VARCHAR(10) NOT NULL,
+    city VARCHAR(255) NOT NULL,
+    street VARCHAR(255) NOT NULL,
+    state VARCHAR(255) NOT NULL,
+    pincode VARCHAR(10) NOT NULL,
+    shop_name VARCHAR(255) NOT NULL
+>>>>>>> 6a2e5a02b9341653065b1506856d20b747430ae5:mysql.sql
 );
