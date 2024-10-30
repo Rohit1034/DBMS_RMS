@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="author" content="Kodinger">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>complaint box</title>
+
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" 
+          integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" 
+          crossorigin="anonymous">
+    <link rel="stylesheet" type="text/css" href="/public/css/my-login.css">
+</head>
+<body class="my-login-page">
+    <div class="card-body" style="background-color:rgb(237, 125, 27);"></div>
+    <section class="h-100 bg-ba">
+        
+        <div class="container h-100">
+            <div class="row justify-content-md-center h-100">
+                <div class="card-wrapper">
+                    <div class="brand">
+                        <img src="/public/assets/logo.jpg" alt="logo">
+                    </div>
+                    <div class="card-body">
+                        <h4 class="card-title">Raise a Complaint</h4>
+                        <form id="complaintform" method="post" class="my-login-validation" action="/complaint" novalidate="">
+                            <div class="form-group">
+                                <body>
+                                    <form>
+                                        <label for="complaintType">Select Complaint Type:</label>
+                                        <select id="complaintType" name="complaintType">
+                                            <option value="GEN">General Inquiry</option>
+                                            <option value="TECH">Technical Issue</option>
+                                            <option value="BILL">Billing Issue</option>
+                                            <option value="SERV">Service Complaint</option>
+                                            <option value="DEL">Delivery Issue</option>
+                                            <option value="FEED">Feedback</option>
+                                            <option value="OTHER">Other</option>
+                                        </select>
+                                    </form>
+                                
+                            </div>
+                        </form>
+                    </div>
+                    
+                </div>
+            </div>
+        </div>
+    </section>
+
+ </body>
