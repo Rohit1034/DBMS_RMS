@@ -2,10 +2,9 @@ const express = require('express');
 const mysql = require('mysql2/promise'); // Use promise-based mysql2
 require('dotenv').config();
 const path = require("path");
-
 const app = express();
 const PORT = process.env.PORT || 3001;
-
+const ben_idlogin=0;
 // Establish database connection using promise-based MySQL
 let db;
 (async () => {
@@ -37,11 +36,12 @@ app.get('/', (req, res) => {
 });
 app.get('/fps',(req,res)=>{
   res.sendFile(path.join(__dirname, 'view', 'fps.html'));
-})
+});
 app.get('/new_fps',(req,res)=>{
   res.sendFile(path.join(__dirname, 'view', 'fps_register.html'));
-})
+});
 
+//login post
 app.post('/login', async (req, res) => {
   const { email, password } = req.body;
   if (!email || !password) {
@@ -69,6 +69,7 @@ app.post('/login', async (req, res) => {
     res.status(500).send('Internal server error');
   }
 });
+//fps login post
 app.post('/fps-login', async (req, res) => {
   const { fps_id, password } = req.body;
   if (!fps_id || !password) {
@@ -97,12 +98,10 @@ app.post('/fps-login', async (req, res) => {
   }
 });
 
-
 app.get('/new', (req, res) => {
   res.sendFile(path.join(__dirname, 'view', 'register.html'));
 });
-
-
+//new registration post
 app.post('/register', async (req, res) => {
   const {
     email, password, fname, mname, lname, ration_no, city, 
@@ -126,6 +125,7 @@ app.post('/register', async (req, res) => {
     res.status(500).send('Database error');
   }
 });
+//register fps post
 app.post('/register_fps', async (req, res) => {
   const {
       fname, mname, lname, password, contact, city, 
@@ -152,6 +152,47 @@ app.post('/register_fps', async (req, res) => {
       console.error('Error inserting data:', err);
       res.status(500).send('Database error');
   }
+});
+
+
+app.get('/dashboard', (req, res)=>{
+  res.sendFile(path.join(__dirname, 'view', 'dashboard.html'));
+});
+app.get('/new_complaint', (req, res) =>{
+  res.sendFile(path.join(__dirname, 'view', 'complaint.html'));
+});
+//thsi should be added to login page to retrieve ben_id 
+// db.query("SELECT * FROM beneficiary where email = ?",[email],(err,result) =>{
+//   if(err){
+//     console.log(err);
+//   }else if(result.length == 0){
+//     res.send("invalid email or password");
+//   }else{
+//     ben_idlogin = result[0].ben_id;
+//     console.log(ben_idlogin);
+//     // req.session.ben_id = ben_id;
+//     // res.redirect('/new_complaint');
+//   }
+// });
+//new complaint post
+app.post('/new_complaint',  async (req, res) =>{
+  const{
+    email,complaint_type, description_complaint
+  } = req.body;
+  
+  console.log("checking ");
+  if( !complaint_type || !description_complaint){
+    res.status(400).send("please fill the above values properly!");
+  }
+  try{
+     const query2 = 'INSERT INTO complaint (ben_id, complaint_type, description_complaint) values(?,?, ?);';
+     await db.query(query2, [ben_idlogin, complaint_type, description_complaint]);
+    
+    res.send("complaint send successfully!");
+  }catch(err){
+    console.error("Error inserting data: ",err);
+    res.status(500).send("dataBase error");
+  }  
 });
 
 

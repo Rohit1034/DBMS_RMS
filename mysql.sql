@@ -20,14 +20,14 @@ CREATE TABLE beneficiary (
 <<<<<<< HEAD:yash rms sqlcommands.txt
 
 create TABLE complaint (
-    complaint_ID int primary key,
+    complaint_ID int  AUTO_INCREMENT primary key,
     ben_id int,
-    compalint_type VARCHAR(200) NOT NULL, 
+    complaint_type VARCHAR(200) NOT NULL, 
     description_complaint VARCHAR(1000) NOT NULL,
-    date_complaint date , 
-    time_complaint time,
+    complaint_time datetime,
     foreign key(ben_id) references beneficiary(ben_id)
 );
+alter table complaint modify complaint_time datetime default current_timestamp();
 =======
 CREATE TABLE fps (
     fps_id INT AUTO_INCREMENT PRIMARY KEY,  -- fps_id is now auto-incremented
