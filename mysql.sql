@@ -17,18 +17,6 @@ CREATE TABLE beneficiary (
     gender CHAR(1) NOT NULL CHECK (gender IN ('M', 'F', 'O')),
     member_count INT NOT NULL CHECK (member_count > 0)
 );
-<<<<<<< HEAD:yash rms sqlcommands.
-
-create TABLE complaint (
-    complaint_ID int  AUTO_INCREMENT primary key,
-    ben_id int,
-    complaint_type VARCHAR(200) NOT NULL, 
-    description_complaint VARCHAR(1000) NOT NULL,
-    complaint_time datetime,
-    foreign key(ben_id) references beneficiary(ben_id)
-);
-alter table complaint modify complaint_time datetime default current_timestamp();
-=======
 CREATE TABLE fps (
     fps_id INT AUTO_INCREMENT PRIMARY KEY,  -- fps_id is now auto-incremented
     fname VARCHAR(255) NOT NULL,
@@ -41,5 +29,38 @@ CREATE TABLE fps (
     state VARCHAR(255) NOT NULL,
     pincode VARCHAR(10) NOT NULL,
     shop_name VARCHAR(255) NOT NULL
->>>>>>> 6a2e5a02b9341653065b1506856d20b747430ae5:mysql.sql
 );
+create TABLE complaint (
+    complaint_ID int  AUTO_INCREMENT primary key,
+    ben_id int,
+    complaint_type VARCHAR(200) NOT NULL, 
+    description_complaint VARCHAR(1000) NOT NULL,
+    complaint_time datetime default current_timestamp(),
+    foreign key(ben_id) references beneficiary(ben_id)
+);
+CREATE TABLE ration_card (
+    ration_no INT PRIMARY KEY,
+    ben_id INT,
+    expiry DATE,
+    card_type VARCHAR(45) NOT NULL,
+    member_count INT,
+    FOREIGN KEY (ben_id) REFERENCES beneficiary(ben_id)
+);
+DELIMITER //
+
+CREATE TRIGGER set_member_count_before_insert
+BEFORE INSERT ON ration_card
+FOR EACH ROW
+BEGIN
+    DECLARE ben_member_count INT;
+    
+    -- Select member_count from beneficiary table based on ben_id
+    SELECT member_count INTO ben_member_count
+    FROM beneficiary
+    WHERE ben_id = NEW.ben_id;
+
+    -- Set member_count in ration_card table to the value from beneficiary
+    SET NEW.member_count = ben_member_count;
+END //
+
+DELIMITER ;
