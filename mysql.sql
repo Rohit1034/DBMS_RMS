@@ -17,7 +17,7 @@ CREATE TABLE beneficiary (
     gender CHAR(1) NOT NULL CHECK (gender IN ('M', 'F', 'O')),
     member_count INT NOT NULL CHECK (member_count > 0)
 );
-<<<<<<< HEAD:yash rms sqlcommands.txt
+<<<<<<< HEAD:yash rms sqlcommands.
 
 create TABLE complaint (
     complaint_ID int  AUTO_INCREMENT primary key,

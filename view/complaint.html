@@ -21,10 +21,7 @@
                             <h4 class="card-title">Raise a Complaint</h4>
                             <div class="form-group">
                                 <form id="new_complaint" method="post" class="my-login-validation" action="/new_complaint" novalidate="">
-                                    <div class="form-group">
-                                        <label for="email">E-mail</label>
-                                        <input id="email" type="text" class="form-control" name="email" placeholder="Enter email" required>
-                                    </div>
+                                
                                     <label for="complaint_type">Select Complaint Type:</label>
                                     <select id="complaint_type" name="complaint_type">
                                         <option value="GEN">General Inquiry</option>
@@ -51,23 +48,5 @@
             </div>
         </section>
     </div>
-    <script>
-        document.getElementById('new_complaint').addEventListener('submit', async (event) => {
-            event.preventDefault();
-            const complaint_type = document.getElementById('complaint_type').value;
-            const description_complaint = document.getElementById('description_complaint').value;
-            const email = document.getElementById('email' ).value;
-            const response = await fetch('/new_complaint', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({email,  complaint_type, description_complaint }),
-            });
-
-            const result = await response.text();
-            alert(result);
-        });
-    </script>
 </body>
 </html>

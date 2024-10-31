@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="author" content="Kodinger">
-    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>My Login Page</title>
 
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" 
@@ -19,11 +19,11 @@
             <div class="row justify-content-md-center h-100">
                 <div class="card-wrapper">
                     <div class="brand">
-                        <img src="/assets/logo.jpg" alt="logo"> <!-- Updated -->
+                        <img src="/assets/logo.jpg" alt="Logo" class="img-fluid"> <!-- Updated -->
                     </div>
                     <div class="card-body">
                         <h4 class="card-title">Login</h4>
-                        <form id="loginForm" method="post" class="my-login-validation" action="/login" novalidate="">
+                        <form id="loginForm" class="my-login-validation" action="/login" method="POST" novalidate="">
                             <div class="form-group">
                                 <label for="email">E-Mail Address</label>
                                 <input id="email" type="email" class="form-control" name="email" required autofocus>
@@ -41,7 +41,7 @@
                                 </div>
                             </div>
                             <div class="form-group m-0">
-                                <button onclick="location.href='/dashboard'" type="button" class="btn btn-primary btn-block">Login</button>
+                                <button type="submit" class="btn btn-primary btn-block">Login</button>
                             </div>
                             <div class="mt-4 text-center">
                                 Don't have an account? <a href="/new">Create new</a>
@@ -53,39 +53,7 @@
         </div>
     </section>
     
-    <script>
-        document.getElementById('adminButton').addEventListener('click', () => {
-            window.location.href = 'fps.html'; // Replace with your target page's path
-        });
-
-        document.getElementById('loginForm').addEventListener('submit', async (event) => {
-            event.preventDefault(); // Prevent form default submission behavior
-
-            const email = document.getElementById('email').value;
-            const password = document.getElementById('password').value;
-
-            try {
-                const response = await fetch('/login', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({ email, password }),
-                });
-
-                if (response.ok) {
-                    const result = await response.text();
-                    alert(result);
-                } else {
-                    const error = await response.text();
-                    alert('Login failed: ' + error);
-                }
-            } catch (error) {
-                alert('An error occurred: ' + error.message);
-            }
-        });
-    </script>
-
+    
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" 
             integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" 
             crossorigin="anonymous"></script>

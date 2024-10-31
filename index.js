@@ -4,7 +4,8 @@ require('dotenv').config();
 const path = require("path");
 const app = express();
 const PORT = process.env.PORT || 3001;
-const ben_idlogin=0;
+let ben_idlogin = 0;
+
 // Establish database connection using promise-based MySQL
 let db;
 (async () => {
@@ -31,17 +32,28 @@ app.use((req, res, next) => {
   console.log(`Request for: ${req.url}`);
   next();
 });
+
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'view', 'login.html'));
 });
-app.get('/fps',(req,res)=>{
+
+app.get('/fps', (req, res) => {
   res.sendFile(path.join(__dirname, 'view', 'fps.html'));
 });
-app.get('/new_fps',(req,res)=>{
+
+app.get('/new_fps', (req, res) => {
   res.sendFile(path.join(__dirname, 'view', 'fps_register.html'));
 });
 
-//login post
+app.get('/new', (req, res) => {
+  res.sendFile(path.join(__dirname, 'view', 'register.html'));
+});
+
+app.get('/dashboard', (req, res) => {
+  res.sendFile(path.join(__dirname, 'view', 'dashboard.html'));
+});
+
+// Login POST route
 app.post('/login', async (req, res) => {
   const { email, password } = req.body;
   if (!email || !password) {
@@ -50,26 +62,33 @@ app.post('/login', async (req, res) => {
 
   try {
     const [rows] = await db.query(
-      'SELECT password FROM beneficiary WHERE email = ?',
+      'SELECT ben_id, password FROM beneficiary WHERE email = ?',
       [email]
     );
+
     if (rows.length === 0) {
       console.log('No user found with that email');
       return res.status(404).send('Invalid email or password.');
     }
-    const storedPassword = rows[0].password;
+
+    const { ben_id, password: storedPassword } = rows[0];
     if (storedPassword !== password) {
       console.log('Incorrect password');
       return res.status(401).send('Invalid email or password.');
     }
 
-    res.send('Logged in successfully!');
+    // Set the ben_idlogin variable
+    ben_idlogin = ben_id;
+    console.log(`Logged in with ben_id: ${ben_idlogin}`);
+
+    res.redirect("/dashboard");
   } catch (err) {
     console.error('Error during login:', err);
     res.status(500).send('Internal server error');
   }
 });
-//fps login post
+
+// FPS login POST route
 app.post('/fps-login', async (req, res) => {
   const { fps_id, password } = req.body;
   if (!fps_id || !password) {
@@ -81,10 +100,12 @@ app.post('/fps-login', async (req, res) => {
       'SELECT password FROM fps WHERE fps_id = ?',
       [fps_id]
     );
+
     if (rows.length === 0) {
       console.log('No user found with that fps_id');
       return res.status(404).send('Invalid email or password.');
     }
+
     const storedPassword = rows[0].password;
     if (storedPassword !== password) {
       console.log('Incorrect password');
@@ -98,13 +119,10 @@ app.post('/fps-login', async (req, res) => {
   }
 });
 
-app.get('/new', (req, res) => {
-  res.sendFile(path.join(__dirname, 'view', 'register.html'));
-});
-//new registration post
+// Registration POST route for beneficiary
 app.post('/register', async (req, res) => {
   const {
-    email, password, fname, mname, lname, ration_no, city, 
+    email, password, fname, mname, lname, ration_no, city,
     street, state, pincode, dob, gender, member_count
   } = req.body;
 
@@ -114,94 +132,78 @@ app.post('/register', async (req, res) => {
   }
 
   try {
-    const query =`INSERT INTO beneficiary (email, password, fname, mname, lname, ration_no, city, street, state, pincode, dob, gender, member_count) 
+    const query = `INSERT INTO beneficiary (email, password, fname, mname, lname, ration_no, city, street, state, pincode, dob, gender, member_count) 
       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
     await db.query(query, [email, password, fname, mname, lname, ration_no, city, street, state, pincode, dob, gender, member_count]);
-    res.send('User registered successfully!');
-    //req.setTimeout(2000);
-    res.sendFile(path.join(__dirname, 'view','login.html'));
+
+    res.redirect('/');
   } catch (err) {
     console.error('Error inserting data:', err);
     res.status(500).send('Database error');
   }
 });
-//register fps post
+
+// Registration POST route for FPS
 app.post('/register_fps', async (req, res) => {
   const {
-      fname, mname, lname, password, contact, city, 
-      street, state, pincode, shop_name
+    fname, mname, lname, password, contact, city,
+    street, state, pincode, shop_name
   } = req.body;
 
-  // Check for required fields
   if (!fname || !mname || !lname || !contact || !password || !shop_name ||
       !city || !street || !state || !pincode) {
-      return res.status(400).send("Please fill all values properly.");
+    return res.status(400).send("Please fill all values properly.");
   }
 
   try {
-      const query = `INSERT INTO fps (fname, mname, lname, password, contact, city, street, state, pincode, shop_name) 
+    const query = `INSERT INTO fps (fname, mname, lname, password, contact, city, street, state, pincode, shop_name) 
                     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
-      
-      const [result] = await db.query(query, [fname, mname, lname, password, contact, city, street, state, pincode, shop_name]);
 
-      // Get the auto-incremented fps_id
-      const newFpsId = result.insertId; // This gives you the last inserted ID
+    const [result] = await db.query(query, [fname, mname, lname, password, contact, city, street, state, pincode, shop_name]);
 
-      res.send(`User registered successfully! Your FPS ID is ${newFpsId}`);
+    const newFpsId = result.insertId;
+    res.send(`User registered successfully! Your FPS ID is ${newFpsId}`);
   } catch (err) {
-      console.error('Error inserting data:', err);
-      res.status(500).send('Database error');
+    console.error('Error inserting data:', err);
+    res.status(500).send('Database error');
   }
 });
 
+// New complaint POST route
+app.post('/new_complaint', async (req, res) => {
+  const {
+    complaint_type, description_complaint
+  } = req.body;
 
-app.get('/dashboard', (req, res)=>{
-  res.sendFile(path.join(__dirname, 'view', 'dashboard.html'));
+  if (!complaint_type || !description_complaint) {
+    return res.status(400).send("Please fill the above values properly!");
+  }
+
+  try {
+    const query2 = 'INSERT INTO complaint (ben_id, complaint_type, description_complaint) VALUES (?, ?, ?)';
+    await db.query(query2, [ben_idlogin, complaint_type, description_complaint]);
+
+    res.send("Complaint sent successfully!");
+  } catch (err) {
+    console.error("Error inserting data: ", err);
+    res.status(500).send("Database error");
+  }
 });
-app.get('/new_complaint', (req, res) =>{
+
+app.get('/new_complaint', (req, res) => {
   res.sendFile(path.join(__dirname, 'view', 'complaint.html'));
 });
-//thsi should be added to login page to retrieve ben_id 
-// db.query("SELECT * FROM beneficiary where email = ?",[email],(err,result) =>{
-//   if(err){
-//     console.log(err);
-//   }else if(result.length == 0){
-//     res.send("invalid email or password");
-//   }else{
-//     ben_idlogin = result[0].ben_id;
-//     console.log(ben_idlogin);
-//     // req.session.ben_id = ben_id;
-//     // res.redirect('/new_complaint');
-//   }
-// });
-//new complaint post
-app.post('/new_complaint',  async (req, res) =>{
-  const{
-    email,complaint_type, description_complaint
-  } = req.body;
-  
-  console.log("checking ");
-  if( !complaint_type || !description_complaint){
-    res.status(400).send("please fill the above values properly!");
-  }
-  try{
-     const query2 = 'INSERT INTO complaint (ben_id, complaint_type, description_complaint) values(?,?, ?);';
-     await db.query(query2, [ben_idlogin, complaint_type, description_complaint]);
-    
-    res.send("complaint send successfully!");
-  }catch(err){
-    console.error("Error inserting data: ",err);
-    res.status(500).send("dataBase error");
-  }  
-});
 
-
-app.get('/backToLogin', (req, res)=>{
-  res.sendFile(path.join(__dirname, 'view', 'backToLogin.html'));
-});
 app.get('/forgot', (req, res) => {
   res.sendFile(path.join(__dirname, 'view', 'forgot.html'));
 });
+
+// General error handler
+app.use((err, req, res, next) => {
+  console.error('Unhandled error:', err);
+  res.status(500).send('Internal server error');
+});
+
 app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);
 });
