@@ -58,17 +58,24 @@
                                     <label for="dob">Date of Birth</label>
                                     <input id="dob" type="date" class="form-control" name="dob" required>
                                 </div>
-                                
                                 <div class="form-group">
                                     <label for="gender">Gender</label>
-                                    <input id="gender" type="text" class="form-control" name="gender" placeholder="M/F" required>
+                                    <select id="gender" name="gender" class="form-control" required>
+                                        <option value="">Select</option>
+                                        <option value="M">Male</option>
+                                        <option value="F">Female</option>
+                                        <option value="O">Other</option>
+                                    </select>
                                 </div>
-
                                 <div class="form-group">
-                                    <label for="members">Number of Members</label>
-                                    <input id="member_count" type="number" class="form-control" name="member_count" placeholder="Number of members in family" required>
+                                    <label for="card_type">CARD TYPE</label>
+                                    <select id="card_type" name="card_type" class="form-control" required>
+                                        <option value="">Select</option>
+                                        <option value="Yellow">Yellow</option>
+                                        <option value="Orange">Female</option>
+                                        <option value="Saffron">Other</option>
+                                    </select>                               
                                 </div>
-
                                 <div class="form-group">
                                     <div class="custom-checkbox custom-control">
                                         <input type="checkbox" name="agree" id="agree" class="custom-control-input" required>

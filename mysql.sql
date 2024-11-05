@@ -1,4 +1,3 @@
-yash rms
 
 
 CREATE TABLE beneficiary (
@@ -15,7 +14,8 @@ CREATE TABLE beneficiary (
     pincode VARCHAR(10) NOT NULL,
     dob DATE NOT NULL,
     gender CHAR(1) NOT NULL CHECK (gender IN ('M', 'F', 'O')),
-    member_count INT NOT NULL CHECK (member_count > 0)
+    member_count INT DEFAULT 1,
+    card_type varchar(20)
 );
 CREATE TABLE fps (
     fps_id INT AUTO_INCREMENT PRIMARY KEY,  -- fps_id is now auto-incremented
@@ -46,21 +46,34 @@ CREATE TABLE ration_card (
     member_count INT,
     FOREIGN KEY (ben_id) REFERENCES beneficiary(ben_id)
 );
-DELIMITER //
 
-CREATE TRIGGER set_member_count_before_insert
-BEFORE INSERT ON ration_card
+
+CREATE TRIGGER insert_into_ration_card_after_beneficiary_insert
+AFTER INSERT ON beneficiary
 FOR EACH ROW
 BEGIN
-    DECLARE ben_member_count INT;
-    
-    -- Select member_count from beneficiary table based on ben_id
-    SELECT member_count INTO ben_member_count
-    FROM beneficiary
-    WHERE ben_id = NEW.ben_id;
-
-    -- Set member_count in ration_card table to the value from beneficiary
-    SET NEW.member_count = ben_member_count;
+    INSERT INTO ration_card (ration_no, ben_id, expiry, card_type, member_count)
+    VALUES (
+        NEW.ration_no,                          -- Using ration_no from beneficiary
+        NEW.ben_id,                             -- Using the newly inserted ben_id
+        DATE_ADD(CURRENT_DATE, INTERVAL 5 YEAR),  -- Setting expiry to 5 years from today
+        NEW.card_type,                          -- Using the card_type from beneficiary
+        NEW.member_count                        -- Using the member_count from beneficiary
+    );
 END //
 
 DELIMITER ;
+
+
+
+
+
+CREATE TABLE family_members (
+    member_id INT AUTO_INCREMENT PRIMARY KEY,  -- Unique identifier for each family member
+    ben_id INT NOT NULL,                        -- Foreign key to reference the beneficiary
+    name VARCHAR(100) NOT NULL,                 -- Name of the family member
+    dob DATE NOT NULL,                          -- Date of birth
+    aadhaar_number VARCHAR(12) UNIQUE,         -- Aadhaar number (assuming it's a 12-digit number)
+    relationship VARCHAR(50) NOT NULL,         -- Relationship to the beneficiary
+    FOREIGN KEY (ben_id) REFERENCES beneficiary(ben_id) -- Assuming 'ben_id' exists in beneficiary table
+);

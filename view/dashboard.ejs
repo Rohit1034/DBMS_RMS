@@ -189,7 +189,6 @@
                     <p><strong>Member Count:</strong><%=member_no%></p>
                 </div>
                 <div class="buttons">
-                    <button onclick="showEditPopup()">Change Ration Card Details</button>
                     <button onclick="showAddMemberPopup()">Add Member</button>
                 </div>
             </div>
@@ -276,24 +275,26 @@
     <!-- Add Member Popup -->
     <div id="addMemberPopup" class="popup">
         <div class="popup-content">
-            <h3>Add New Member</h3>
-            <label for="memberName">Name:</label>
-            <input type="text" id="memberName" placeholder="Enter name">
-            
-            <label for="memberDob">Date of Birth:</label>
-            <input type="date" id="memberDob">
-            
-            <label for="memberAadhar">Aadhaar Number:</label>
-            <input type="text" id="memberAadhar" placeholder="Enter Aadhaar number">
-            
-            <label for="memberRelationship">Relationship:</label>
-            <input type="text" id="memberRelationship" placeholder="Enter relationship">
-            
-            <button onclick="addMember()">Add Member</button>
-            <button onclick="closeAddMemberPopup()">Cancel</button>
+            <form action="/add_member" method="post">
+                <h3>Add New Member</h3>
+                <label for="name">Name:</label>
+                <input type="text" id="name" name="name" placeholder="Enter name" required>
+                
+                <label for="dob">Date of Birth:</label>
+                <input type="date" id="dob" name="dob" required>
+                
+                <label for="aadhar">Aadhaar Number:</label>
+                <input type="text" id="aadhar" name="aadhar" placeholder="Enter Aadhaar number" required>
+                
+                <label for="relationship">Relationship:</label>
+                <input type="text" id="relationship" name="relationship" placeholder="Enter relationship" required>
+                
+                <button type="submit">Add Member</button>
+                <button type="button" onclick="closeAddMemberPopup()">Cancel</button>
+            </form>
         </div>
     </div>
-
+    
     <script>
         function showPanel(panelId) {
             document.querySelectorAll('.panel-section').forEach(section => section.classList.remove('active'));
