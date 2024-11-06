@@ -269,11 +269,30 @@ app.post('/add_member', async (req, res) => {
     const updateCountQuery = 'UPDATE ration_card SET member_count = member_count + 1 WHERE ben_id = ?';
     await db.query(updateCountQuery, [req.session.ben_id]);
 
-    res.redirect('/dashboard');
+    res.send("Member added successfully!");
   } catch (err) {
     console.error("Error inserting data: ", err);
     res.status(500).send("Database error");
   }
+
+
+  // // Check if all required fields are present
+  // if (!name || !dob || !aadhar || !relationship) {
+  //     return res.status(400).send("Please fill all values properly.");
+  // }
+
+  // try {
+  //     // Insert member into the family_members table
+  //     const [result] = await db.query(
+  //         `INSERT INTO family_members (ben_id, name, dob, aadhaar_number, relationship) VALUES (?, ?, ?, ?, ?)`, 
+  //         [req.session.ben_id, name, dob, aadhar, relationship]
+  //     );
+
+  //     res.status(201).send("Member added successfully.");
+  // } catch (err) {
+  //     console.error("Error inserting data:", err);
+  //     res.status(500).send("Database error");
+  // }
 });
 
 
@@ -369,6 +388,24 @@ app.post('/add_stock', async (req, res) => {
   } catch (err) {
     console.error('Error inserting data:', err);
     res.status(500).json({ success: false, message: 'Database error' });
+  }
+});
+
+
+//show members
+app.get('/get_members', async (req, res) => {
+  if (!req.session.ben_id) {
+      return res.redirect('/');
+  }
+  try {
+      const [rows] = await db.query(
+          'SELECT name, dob, aadhaar_number, relationship FROM family_members WHERE ben_id = ?',
+          [req.session.ben_id]
+      );
+      res.json(rows);
+  } catch (err) {
+      console.error("Database query error:", err);
+      res.status(500).send("Internal server error");
   }
 });
 

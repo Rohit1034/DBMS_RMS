@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Stock</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        /* General Styles */
+        body {
+            font-family: Arial, sans-serif;
+            background-image: url('https://png.pngtree.com/background/20211215/original/pngtree-dove-yellow-indian-independence-day-background-picture-image_1456724.jpg');
+            background-size: cover;
+            background-attachment: fixed;
+            margin: 0;
+            color: #333;
+        }
+        
+        .main-panel {
+            text-align: center;
+            padding: 20px;
+            background-color: #004d4d;
+            color: white;
+        }
+        
+        h1 {
+            margin: 0;
+            font-size: 2.5em;
+        }
+
+        .container {
+            display: flex;
+            height: calc(100vh - 80px);
+            overflow: hidden;
+        }
+
+        /* Sidebar Menu */
+        .menu-bar {
+            width: 220px;
+            background-color: #006666;
+            color: white;
+            padding-top: 20px;
+        }
+
+        .menu-bar ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .menu-bar ul li {
+            padding: 15px;
+            cursor: pointer;
+        }
+
+        .menu-bar ul li:hover {
+            background-color: #004d4d;
+        }
+
+        .menu-bar ul li a {
+            color: white;
+            text-decoration: none;
+            font-weight: bold;
+            display: block;
+        }
+
+        /* Content Panel */
+        .content-panel {
+            flex-grow: 1;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.9);
+            overflow-y: auto;
+        }
+
+        .panel-section {
+            display: none;
+        }
+
+        .panel-section.active {
+            display: block;
+        }
+
+        h2 {
+            color: #006666;
+            border-bottom: 2px solid #004d4d;
+            padding-bottom: 10px;
+        }
+
+        .card-info p {
+            margin: 10px 0;
+            font-weight: bold;
+        }
+
+        button {
+            background-color: #006666;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-right: 10px;
+        }
+
+        button:hover {
+            background-color: #004d4d;
+        }
+
+        /* Popup styling */
+        .popup {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            justify-content: center;
+            align-items: center;
+        }
+
+        .popup-content {
+            background-color: white;
+            padding: 20px;
+            width: 300px;
+            border-radius: 8px;
+            text-align: left;
+        }
+
+        .popup-content h3 {
+            margin-top: 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Add New Stock</h1>
+        <form id="stockForm">
+            <div class="form-group">
+                <label for="stock_id">Stock ID</label>
+                <input type="text" id="stock_id" class="form-control" required>
+            </div>
+            <div class="form-group">
+                <label for="stack_name">Stock Name</label>
+                <input type="text" id="stock_name" class="form-control" required>
+            </div>
+            <div class="form-group">
+                <label for="fps_id">FPS ID</label>
+                <input type="text" id="fps_id" class="form-control" required>
+            </div>
+            <div class="form-group">
+                <label for="quantity">Quantity</label>
+                <input type="number" id="quantity" class="form-control" required>
+            </div>
+            <button type="submit" class="btn btn-primary">Add Stock</button>
+        </form>
+        <br>
+        <h2>Stock List</h2>
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Stock ID</th>
+                    <th>Stock Name</th>
+                    <th>FPS ID</th>
+                    <th>Quantity</th>
+                </tr>
+            </thead>
+            <tbody id="stockTableBody">
+                <tr>
+                    <td colspan="4">No data available</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <script>
+        document.getElementById('stockForm').addEventListener('submit', async function(event) {
+            event.preventDefault();
+            const stockId = document.getElementById('stock_id').value;
+            const stockName = document.getElementById('stack_name').value;
+            const fpsId = document.getElementById('fps_id').value;
+            const quantity = document.getElementById('quantity').value;
+
+            const response = await fetch('/add_stock', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ stock_id: stockId, stack_name: stockName, fps_id: fpsId, quantity: quantity }),
+            });
+
+            const result = await response.json();
+            if (result.success) {
+                const newRow = document.createElement('tr');
+
+                const stockIdCell = document.createElement('td');
+                stockIdCell.textContent = stockId;
+                newRow.appendChild(stockIdCell);
+
+                const stockNameCell = document.createElement('td');
+                stockNameCell.textContent = stockName;
+                newRow.appendChild(stockNameCell);
+
+                const fpsIdCell = document.createElement('td');
+                fpsIdCell.textContent = fpsId;
+                newRow.appendChild(fpsIdCell);
+
+                const quantityCell = document.createElement('td');
+                quantityCell.textContent = quantity;
+                newRow.appendChild(quantityCell);
+
+                const tableBody = document.getElementById('stockTableBody');
+                if (tableBody.children[0].textContent === 'No data available') {
+                    tableBody.innerHTML = '';
+                }
+                tableBody.appendChild(newRow);
+
+                document.getElementById('stockForm').reset();
+            } else {
+                alert('Failed to add stock. Please try again.');
+            }
+        });
+    </script>
+</body>
+</html>

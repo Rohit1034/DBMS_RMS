@@ -320,7 +320,7 @@
                 <label for="relationship">Relationship:</label>
                 <input type="text" id="relationship" name="relationship" placeholder="Enter relationship" required>
                 
-                <button type="submit" >Add Member</button>
+                <button type="submit">Add Member</button>
                 <button type="button" onclick="closeAddMemberPopup()">Cancel</button>
             </form>
         </div>
@@ -418,9 +418,6 @@
             // Logic to add a new member
             closeAddMemberPopup();
         }
-        document.getElementById('new_complaint').addEventListener('submit', function(event) {
-            event.preventDefault(); // Ensure no code like this is inadvertently preventing submission
-        });
     </script>
 </body>
 </html>
