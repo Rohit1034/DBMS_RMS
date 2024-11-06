@@ -63,6 +63,10 @@ app.get('/new', (req, res) => {
   res.sendFile(path.join(__dirname, 'view', 'register.html'));
 });
 
+app.get("/add_stock", (req, res)=>{
+  res.sendFile(path.join(__dirname, "view", "addStock.ejs"));
+});
+
 app.get('/dashboard', async (req, res) => {
   if (!req.session.ben_id) {
     return res.redirect('/');
@@ -299,6 +303,20 @@ app.post('/new_complaint', async (req, res) => {
     console.error("Error inserting data: ", err);
     res.status(500).send("Database error");
   }  
+});
+
+
+//add stock
+app.post('/add_stock', (req, res) => { 
+  const { stock_id, stock_name, fps_id, quantity } = req.body; 
+  const query = 'INSERT INTO stock (stock_id, stock_name, fps_id, quantity) VALUES (?, ?, ?, ?)'; 
+  db.query(query, [stock_id, stock_name, fps_id, quantity], (err, result) => { 
+    if (err) { console.error('Error inserting data:', err); 
+      res.json({ success: false, message: 'Database error' }); 
+    } else { 
+      res.json({ success: true }); 
+    } 
+  }); 
 });
 
 // Forgot password page

@@ -47,6 +47,8 @@ CREATE TABLE ration_card (
     FOREIGN KEY (ben_id) REFERENCES beneficiary(ben_id)
 );
 
+alter table ration_card add column status varchar(20) not null;
+
 
 CREATE TRIGGER insert_into_ration_card_after_beneficiary_insert
 AFTER INSERT ON beneficiary
@@ -77,3 +79,10 @@ CREATE TABLE family_members (
     relationship VARCHAR(50) NOT NULL,         -- Relationship to the beneficiary
     FOREIGN KEY (ben_id) REFERENCES beneficiary(ben_id) -- Assuming 'ben_id' exists in beneficiary table
 );
+
+CREATE TABLE stock (
+    stock_id int AUTO_INCREMENT primary key,
+    stack_name varchar(20) not null,  
+    fps_id int, 
+    quantity int, 
+    foreign key(fps_id) REFERENCES fps(fps_id));

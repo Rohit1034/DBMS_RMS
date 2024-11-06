@@ -169,7 +169,7 @@
         <!-- Sidebar Menu -->
         <div class="menu-bar">
             <ul>
-                <li><a href="#" onclick="showPanel('rationCardDetails')">Add Stock</a></li>
+                <li><a href="#" onclick="showPanel('Add Stock')">Add Stock</a></li>
                 <li><a href="#" onclick="showPanel('eligibilityVerification')">Grahak Records</a></li>
                 <li><a href="#" onclick="showPanel('newComplaint')">Eligibility Verification</a></li>
                 <li><a href="#" onclick="showPanel('notifications')">Notifications</a></li>
@@ -188,6 +188,61 @@
                     <p><strong>contact: </strong><%=contact%></p>
                 </div>
             </div>
+<!--add stock-->
+<div class ="content-panel"> 
+            <h1>Add New Stock</h1>
+        <form id="stockForm">
+            <div class="form-group">
+                <label for="stock_id">Stock ID</label>
+                <input type="text" id="stock_id" class="form-control" required>
+            </div>
+            <div class="form-group">
+                <label for="stock_name">Stock Name</label>
+                <input type="text" id="stock_name" class="form-control" required>
+            </div>
+            <div class="form-group">
+                <label for="fps_id">FPS ID</label>
+                <input type="text" id="fps_id" class="form-control" required>
+            </div>
+            <div class="form-group">
+                <label for="quantity">Quantity</label>
+                <input type="number" id="quantity" class="form-control" required>
+            </div>
+            <button  onclick="location.href='/fps_dashboard'" type="submit" class="btn btn-primary">Add Stock</button>
+        </form>
+        <br>
+        <h2>Stock List</h2>
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Stock ID</th>
+                    <th>Stock Name</th>
+                    <th>FPS ID</th>
+                    <th>Quantity</th>
+                </tr>
+            </thead>
+            <tbody id="stockTableBody">
+                <tr>
+                    <td colspan="4">No data available</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <script src="index.js"></script>
+</div>
+
+
+
+        <!-- Content Panel -->
+        <div class="content-panel">
+            <div id="records" class="panel-section">
+                <h2>Records</h2>
+                <label for="recordID"><strong>Record ID:</strong></label>
+                <input type="text" id="recordID" placeholder="Enter record ID to view details">
+                <button onclick="fetchRecord()">Fetch Record</button>
+            </div>
+        </div>
+    </div>
             
             <!-- Eligibility Verification Section -->
             <form action="/eligbilty_verification" method="post" class="eligibilty_verification">
@@ -245,80 +300,11 @@
                 <button onclick="fetchRecord()">Fetch Record</button>
             </div>
         </div>
-    </div>
-
-    <!-- Edit Ration Card Popup -->
-    <div id="editPopup" class="popup">
-        <div class="popup-content">
-            <h3>Edit Ration Card Details</h3>
-            <label for="editCardNumber">Card Number:</label>
-            <input type="text" id="editCardNumber" placeholder="Enter card number">
-            
-            <label for="editCardType">Card Type:</label>
-            <input type="text" id="editCardType" placeholder="Enter card type">
-            
-            <label for="editExpiryDate">Expiry Date:</label>
-            <input type="date" id="editExpiryDate">
-            
-            <label for="editMemberCount">Member Count:</label>
-            <input type="number" id="editMemberCount" placeholder="Enter member count">
-            
-            <button onclick="changeDetails()">Change</button>
-            <button onclick="closeEditPopup()">Cancel</button>
-        </div>
-    </div>
-
-    <!-- Add Member Popup -->
-    <div id="addMemberPopup" class="popup">
-        <div class="popup-content">
-            <h3>Add New Member</h3>
-            <label for="memberName">Name:</label>
-            <input type="text" id="memberName" placeholder="Enter name">
-            
-            <label for="memberDob">Date of Birth:</label>
-            <input type="date" id="memberDob">
-            
-            <label for="memberAadhar">Aadhaar Number:</label>
-            <input type="text" id="memberAadhar" placeholder="Enter Aadhaar number">
-            
-            <label for="memberRelationship">Relationship:</label>
-            <input type="text" id="memberRelationship" placeholder="Enter relationship">
-            
-            <button onclick="addMember()">Add Member</button>
-            <button onclick="closeAddMemberPopup()">Cancel</button>
-        </div>
-    </div>
-
+   
     <script>
         function showPanel(panelId) {
             document.querySelectorAll('.panel-section').forEach(section => section.classList.remove('active'));
             document.getElementById(panelId).classList.add('active');
-        }
-
-        function showEditPopup() {
-            document.getElementById("editPopup").style.display = "flex";
-        }
-
-        function closeEditPopup() {
-            document.getElementById("editPopup").style.display = "none";
-        }
-
-        function showAddMemberPopup() {
-            document.getElementById("addMemberPopup").style.display = "flex";
-        }
-
-        function closeAddMemberPopup() {
-            document.getElementById("addMemberPopup").style.display = "none";
-        }
-
-        function changeDetails() {
-            // Logic to update ration card details
-            closeEditPopup();
-        }
-
-        function addMember() {
-            // Logic to add a new member
-            closeAddMemberPopup();
         }
     </script>
 </body>
