@@ -47,9 +47,6 @@ CREATE TABLE ration_card (
     FOREIGN KEY (ben_id) REFERENCES beneficiary(ben_id)
 );
 
-alter table ration_card add column status varchar(20) not null;
-
-
 CREATE TRIGGER insert_into_ration_card_after_beneficiary_insert
 AFTER INSERT ON beneficiary
 FOR EACH ROW
