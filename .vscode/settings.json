@@ -14,5 +14,6 @@
             "username": "root",
             "password": "Rohit_@1034"
         }
-    ]
+    ],
+    "livePreview.defaultPreviewPath": "/view/fps_dashboard.ejs"
 }

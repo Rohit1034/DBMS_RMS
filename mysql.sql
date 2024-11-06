@@ -82,13 +82,22 @@ CREATE TABLE eligibility (
     eg_id INT AUTO_INCREMENT PRIMARY KEY,
     annual_income DOUBLE,
     occupation VARCHAR(45),
-    verification_status VARCHAR(100),
+    verification_status VARCHAR(100) DEFAULT 'pending',
     verified BOOLEAN
 );
+
 CREATE TABLE stock (
     stock_id int AUTO_INCREMENT primary key,
     stock_name varchar(20) not null,  
     fps_id int, 
     quantity int, 
     stock_date DATE,
-    foreign key(fps_id) REFERENCES fps(fps_id));
+    foreign key(fps_id) REFERENCES fps(fps_id)
+    );
+CREATE TABLE notification (
+    notification INT PRIMARY KEY,
+    ben_id INT,
+    fps_id INT,
+    message VARCHAR(100),
+    timesent TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);

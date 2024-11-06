@@ -104,6 +104,22 @@
             background-color: #004d4d;
         }
 
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 10px;
+            border: 1px solid #004d4d;
+            text-align: left;
+        }
+
+        th {
+            background-color: #004d4d;
+            color: white;
+        }
+
         /* Popup styling */
         .popup {
             display: none;
@@ -140,8 +156,8 @@
         <div class="menu-bar">
             <ul>
                 <li><a href="#" onclick="showPanel('addStock')">Add Stock</a></li>
-                <li><a href="#" onclick="showPanel('eligibilityVerification')">Grahak Records</a></li>
-                <li><a href="#" onclick="showPanel('newComplaint')">Eligibility Verification</a></li>
+                <li><a href="#" onclick="showPanel('eligibilityVerification')">Eligibility Verification</a></li>
+                <li><a href="#" onclick="showPanel('newComplaint')">New Complaint</a></li>
                 <li><a href="#" onclick="showPanel('notifications')">Notifications</a></li>
             </ul>
         </div>
@@ -150,21 +166,18 @@
             <div id="rationCardDetails" class="panel-section active">
                 <h2>FPS Details</h2>
                 <div class="card-info">
-                    <p><strong>FPS ID : </strong> <%=fps_id%></p>
-                    <p><strong>Shop Name: </strong> <%=shop_name%></p>
-                    <p><strong>Sevak Name: </strong> <%=fname%></p>
-                    <p><strong>City: </strong> <%=city%></p>
-                    <p><strong>Contact: </strong> <%=contact%></p>
+                    <p><strong>FPS ID : </strong> <%= fps_id %></p>
+                    <p><strong>Shop Name: </strong> <%= shop_name %></p>
+                    <p><strong>Sevak Name: </strong> <%= fname %></p>
+                    <p><strong>City: </strong> <%= city %></p>
+                    <p><strong>Contact: </strong> <%= contact %></p>
                 </div>
             </div>
-        </div>
-        <!-- Content Panel -->
-        <div class="content-panel">
+
             <!-- Add Stock Section -->
             <div id="addStock" class="panel-section">
                 <h2>Add New Stock</h2>
                 <form action="/add_stock" method="post">
-                    
                     <div class="form-group">
                         <label for="quantity">Quantity</label>
                         <input type="number" id="quantity" name="quantity" class="form-control" required>
@@ -182,23 +195,53 @@
             </div>
 
             <!-- Eligibility Verification Section -->
-            <div id="eligibilityVerification" class="panel-section">
-                <h2>Eligibility Verification</h2>
-                <form action="/eligbilty_verification" method="post">
-                    <label for="income"><strong>Annual Income:</strong></label>
-                    <input type="number" id="income" name="income" placeholder="Enter income">
-                    
-                    <label for="occupation"><strong>Occupation:</strong></label>
-                    <input type="text" id="occupation" name="occupation" placeholder="Enter occupation">
-                    
-                    <label><strong>Verification Status:</strong></label>
-                    <input type="checkbox" id="verificationStatus" disabled> Verified
-                    
-                    <label for="verificationDate"><strong>Verification Date:</strong></label>
-                    <input type="date" id="verificationDate" name="verificationDate" readonly>
-                    <button type="submit">Verify</button>
-                </form>
-            </div>
+            <!-- Eligibility Verification Section -->
+<!-- Eligibility Verification Section -->
+<!-- Eligibility Verification Section -->
+<div id="eligibilityVerification" class="panel-section">
+    <h2>Eligibility Verification</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Ben ID</th>
+                <th>Annual Income</th>
+                <th>Occupation</th>
+                <th>Verification Status</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            <% eligibilityRecords.forEach(record => { %>
+                <tr>
+                    <td><%= record.ben_id %></td>
+                    <td><%= record.annual_income %></td>
+                    <td><%= record.occupation %></td>
+                    <td><%= record.verification_status %></td>
+                    <td>
+                        <!-- Verify Form -->
+                        <form action="/verify_eligibility" method="POST" style="display:inline;">
+                            <input type="hidden" name="ben_id" value="<%= record.ben_id %>" />
+                            <input type="hidden" name="verified" value="true" /> <!-- 'true' for verified -->
+                            <input type="hidden" name="verification_status" value="verified" />
+                            <button type="submit" style="background-color: green; color: white; padding: 5px 10px; border: none; cursor: pointer;">Verify</button>
+                        </form>
+                        <!-- Reject Form -->
+                        <form action="/verify_eligibility" method="POST" style="display:inline;">
+                            <input type="hidden" name="ben_id" value="<%= record.ben_id %>" />
+                            <input type="hidden" name="verified" value="false" /> <!-- 'false' for rejected -->
+                            <input type="text" name="verification_status" value="<%= record.verification_status %>" />
+                            <button type="submit" style="background-color: red; color: white; padding: 5px 10px; border: none; cursor: pointer;">Reject</button>
+                        </form>
+                    </td>
+                </tr>
+            <% }) %>
+        </tbody>
+    </table>
+</div>
+
+
+
+
 
             <!-- New Complaint Section -->
             <div id="newComplaint" class="panel-section">

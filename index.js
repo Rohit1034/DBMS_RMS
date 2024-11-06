@@ -114,30 +114,59 @@ app.get('/fps_dashboard', async (req, res) => {
   if (!req.session.fps_id) {
     return res.redirect('/');
   }
+
   try {
-    const [rows] = await db.query(
+    // Retrieve FPS information
+    const [fpsRows] = await db.query(
       'SELECT shop_name, city, fname, lname, contact FROM fps WHERE fps_id = ?',
       [req.session.fps_id]
     );
 
-    if (rows.length === 0) {
+    if (fpsRows.length === 0) {
       return res.status(404).send("No FPS information found.");
     }
+    const fpsData = fpsRows[0];
 
-    const fpsData = rows[0];
+    // Retrieve eligibility data
+    const [eligibilityRows] = await db.query(
+      'SELECT ben_id, annual_income, occupation, verification_status, verified FROM eligibility'
+    );
+
+    // Render the template with both fpsData and eligibility data
     res.render('fps_dashboard', {
       shop_name: fpsData.shop_name,
       city: fpsData.city,
       fname: fpsData.fname,
       lname: fpsData.lname,
-      contact:fpsData.contact,
-      fps_id:req.session.fps_id
+      contact: fpsData.contact,
+      fps_id: req.session.fps_id,
+      eligibilityRecords: eligibilityRows // Pass eligibility data to the template
     });
   } catch (err) {
     console.error("Database query error:", err);
     res.status(500).send("Internal server error");
   }
 });
+app.post('/verify_eligibility', async (req, res) => {
+    const { ben_id, verification_status, verified } = req.body;
+
+    try {
+        // Update the verification status and verified field
+        const result = await db.query(
+            'UPDATE eligibility SET verification_status = ?, verified = ? WHERE ben_id = ?',
+            [verification_status, verified === 'true', ben_id] // Convert 'true'/'false' to boolean
+        );
+
+        // Redirect back to the dashboard after updating
+        res.redirect('/fps_dashboard');
+    } catch (err) {
+        console.error(err);
+        res.send('Error updating verification status');
+    }
+});
+
+
+
 // Login post
 app.post('/login', async (req, res) => {
   const { email, password } = req.body;
@@ -274,28 +303,7 @@ app.post('/add_member', async (req, res) => {
     console.error("Error inserting data: ", err);
     res.redirect('/dashboard');
   }
-
-
-  // // Check if all required fields are present
-  // if (!name || !dob || !aadhar || !relationship) {
-  //     return res.status(400).send("Please fill all values properly.");
-  // }
-
-  // try {
-  //     // Insert member into the family_members table
-  //     const [result] = await db.query(
-  //         `INSERT INTO family_members (ben_id, name, dob, aadhaar_number, relationship) VALUES (?, ?, ?, ?, ?)`, 
-  //         [req.session.ben_id, name, dob, aadhar, relationship]
-  //     );
-
-  //     res.status(201).send("Member added successfully.");
-  // } catch (err) {
-  //     console.error("Error inserting data:", err);
-  //     res.status(500).send("Database error");
-  // }
 });
-
-
 // New complaint GET
 app.get('/new_complaint', (req, res) => {
   if (!req.session.ben_id) {
@@ -323,46 +331,48 @@ app.post('/new_complaint', async (req, res) => {
   }  
 });
 
-app.get('eligibility_verification',(req,res)=>{
+app.get('/eligibility_verification',(req,res)=>{
   res.redirect('/dashboard');
 })
 app.post('/eligibility_verification', async (req, res) => {
-    const { annual_income, occupation } = req.body;
+  const { annual_income, occupation } = req.body;
 
-    // Ensure that session is set
-    if (!req.session.ben_id) {
-        return res.status(401).json({ success: false, message: 'Unauthorized: No beneficiary ID found.' });
-    }
+  // Ensure that session is set
+  if (!req.session.ben_id) {
+      return res.status(401).json({ success: false, message: 'Unauthorized: No beneficiary ID found.' });
+  }
 
-    try {
-        const benId = req.session.ben_id;
+  try {
+      const benId = req.session.ben_id;
 
-        // Step 1: Check if the ben_id already exists in the database
-        const checkQuery = `SELECT verification_status, verified FROM eligibility WHERE ben_id = ?`;
-        const [existingRecords] = await db.query(checkQuery, [benId]);
+      // Step 1: Check if the ben_id already exists in the database
+      const checkQuery = `SELECT verification_status, verified FROM eligibility WHERE ben_id = ?`;
+      const [existingRecords] = await db.query(checkQuery, [benId]);
 
-        // Step 2: If ben_id exists, return the verification status
-        if (existingRecords.length > 0) {
-            const { verification_status, verified } = existingRecords[0];
-            return res.json({
-                success: true,
-                message: 'Beneficiary ID already exists.',
-                verification_status: verification_status || 'Pending  ', // Show 'Pending' if null
-                verified: verified ? 'Yes  ' : '  No  ' // Convert boolean to 'Yes' or 'No'
-            });
-        }
+      // Step 2: If ben_id exists, return the verification status
+      if (existingRecords.length > 0) {
+          const { verification_status, verified } = existingRecords[0];
+          return res.json({
+              success: true,
+              message: 'Beneficiary ID already exists.',
+              verification_status: verification_status || 'Pending  ', // Show 'Pending' if null
+              verified: verified ? 'Yes  ' : '  No  ' // Convert boolean to 'Yes' or 'No'
+          });
+      }
 
-        // Step 3: If ben_id does not exist, insert a new record
-        const query = `INSERT INTO eligibility (ben_id, annual_income, occupation) VALUES (?, ?, ?)`;
-        const [result] = await db.query(query, [benId, annual_income, occupation]);
-        console.log('Data inserted successfully:', result);
+      // Step 3: If ben_id does not exist, insert a new record
+      const query = `INSERT INTO eligibility (ben_id, annual_income, occupation) VALUES (?, ?, ?)`;
+      const [result] = await db.query(query, [benId, annual_income, occupation]);
+      console.log('Data inserted successfully:', result);
 
-        res.json({ success: true, message: 'Eligibility verification request is sent successfully!' });
-    } catch (err) {
-        console.error('Error processing request:', err);
-        res.status(500).json({ success: false, message: 'An error occurred while processing the request.' });
-    }
+      res.json({ success: true, message: 'Eligibility verification request is sent successfully!' });
+  } catch (err) {
+      console.error('Error processing request:', err);
+      res.status(500).json({ success: false, message: 'An error occurred while processing the request.' });
+  }
 });
+
+
 //add stock
 app.post('/add_stock', async (req, res) => {
   const { stock_name, quantity, stock_date } = req.body;
