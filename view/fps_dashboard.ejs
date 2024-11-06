@@ -1,0 +1,332 @@
+<!-- <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="author" content="Kodinger">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Dashboard &mdash; Bootstrap 4 Login Page Snippet</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link rel="stylesheet" href="../public/css/my-login.css">
+</head>
+
+<body class="Dashboard">
+    <div class="card-body" style="background-color:rgb(237, 125, 27);"></div>
+    <section class="h-100 bg-ba">
+        
+        <div class="container h-100">
+            <div class="row justify-content-md-center h-100">
+                <div class="card-wrapper"></div>
+                    <div class="card-body">
+                        <div class="form-group m-0">
+                            <button onclick="location.href='/new_complaint'" type="button" class="btn btn-primary btn-block">New Complaint</button>
+                        </div>  
+                    </div>
+                    
+                </div>
+            </div>
+        </div>
+    </section>
+
+</body> -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ration Dharak</title>
+    <link rel="stylesheet" href="stylefps.css">
+    <style>
+        /* General Styles */
+        body {
+            font-family: Arial, sans-serif;
+            background-image: url('https://png.pngtree.com/background/20211215/original/pngtree-dove-yellow-indian-independence-day-background-picture-image_1456724.jpg');
+            background-size: cover;
+            background-attachment: fixed;
+            margin: 0;
+            color: #333;
+        }
+        
+        .main-panel {
+            text-align: center;
+            padding: 20px;
+            background-color: #004d4d;
+            color: white;
+        }
+        
+        h1 {
+            margin: 0;
+            font-size: 2.5em;
+        }
+
+        .container {
+            display: flex;
+            height: calc(100vh - 80px);
+            overflow: hidden;
+        }
+
+        /* Sidebar Menu */
+        .menu-bar {
+            width: 220px;
+            background-color: #006666;
+            color: white;
+            padding-top: 20px;
+        }
+
+        .menu-bar ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .menu-bar ul li {
+            padding: 15px;
+            cursor: pointer;
+        }
+
+        .menu-bar ul li:hover {
+            background-color: #004d4d;
+        }
+
+        .menu-bar ul li a {
+            color: white;
+            text-decoration: none;
+            font-weight: bold;
+            display: block;
+        }
+
+        /* Content Panel */
+        .content-panel {
+            flex-grow: 1;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.9);
+            overflow-y: auto;
+        }
+
+        .panel-section {
+            display: none;
+        }
+
+        .panel-section.active {
+            display: block;
+        }
+
+        h2 {
+            color: #006666;
+            border-bottom: 2px solid #004d4d;
+            padding-bottom: 10px;
+        }
+
+        .card-info p {
+            margin: 10px 0;
+            font-weight: bold;
+        }
+
+        button {
+            background-color: #006666;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-right: 10px;
+        }
+
+        button:hover {
+            background-color: #004d4d;
+        }
+
+        /* Popup styling */
+        .popup {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            justify-content: center;
+            align-items: center;
+        }
+
+        .popup-content {
+            background-color: white;
+            padding: 20px;
+            width: 300px;
+            border-radius: 8px;
+            text-align: left;
+        }
+
+        .popup-content h3 {
+            margin-top: 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="main-panel">
+        <h1>Ration Dharak</h1>
+    </div>
+
+    <div class="container">
+        <!-- Sidebar Menu -->
+        <div class="menu-bar">
+            <ul>
+                <li><a href="#" onclick="showPanel('rationCardDetails')">Ration Card Details</a></li>
+                <li><a href="#" onclick="showPanel('eligibilityVerification')">Eligibility Verification</a></li>
+                <li><a href="#" onclick="showPanel('newComplaint')">New Complaint</a></li>
+                <li><a href="#" onclick="showPanel('notifications')">Notifications</a></li>
+                <li><a href="#" onclick="showPanel('records')">Records</a></li>
+            </ul>
+        </div>
+
+        <!-- Content Panel -->
+        <div class="content-panel">
+            <!-- Ration Card Details Section -->
+            <div id="rationCardDetails" class="panel-section active">
+                <h2>Ration Card Details</h2>
+                <div class="card-info">
+                    <p><strong>Card Number:</strong> <%=card_no%></p>
+                    <p><strong>Card Type:</strong> <%=card_type%></p>
+                    <p><strong>Expiry Date:</strong> <%=expiry%></p>
+                    <p><strong>Member Count:</strong><%=member_no%></p>
+                </div>
+                <div class="buttons">
+                    <button onclick="showEditPopup()">Change Ration Card Details</button>
+                    <button onclick="showAddMemberPopup()">Add Member</button>
+                </div>
+            </div>
+            
+            <!-- Eligibility Verification Section -->
+            <form action="/eligbilty_verification" method="post" class="eligibilty_verification">
+            <div id="eligibilityVerification" class="panel-section">
+                <h2>Eligibility Verification</h2>
+                <label for="income"><strong>Annual Income:</strong></label>
+                <input type="number" id="income" placeholder="Enter income">
+                
+                <label for="occupation"><strong>Occupation:</strong></label>
+                <input type="text" id="occupation" placeholder="Enter occupation">
+                
+                <label><strong>Verification Status:</strong></label>
+                <input type="checkbox" id="verificationStatus" disabled> Verified
+                
+                <label for="verificationDate"><strong>Verification Date:</strong></label>
+                <input type="date" id="verificationDate" readonly>
+                <button type="submit">Verify</button>
+            </div>
+            </form>
+            <!-- New Complaint Section -->
+            <div id="newComplaint" class="panel-section">
+                <h2>New Complaint</h2>
+                <form id="new_complaint" method="post" class="my-login-validation" action="/new_complaint" novalidate="">
+                                
+                    <label for="complaint_type">Select Complaint Type:</label>
+                    <select id="complaint_type" name="complaint_type">
+                        <option value="GEN">General Inquiry</option>
+                        <option value="TECH">Technical Issue</option>
+                        <option value="BILL">Billing Issue</option>
+                        <option value="SERV">Service Complaint</option>
+                        <option value="DEL">Delivery Issue</option>
+                        <option value="FEED">Feedback</option>
+                        <option value="OTHER">Other</option>
+                    </select>
+                    <div class="form-group">
+                        <label for="description_complaint">Description (max 20 words)</label>
+                        <input id="description_complaint" type="text" class="form-control" name="description_complaint" placeholder="Enter Description" required>
+                    </div>
+                    
+                    <div class="form-group m-0">
+                        <button  type="submit" class="btn btn-primary btn-block">submit</button>
+                    </div>
+                </form>
+            </div>
+            <div id="notifications" class="panel-section">
+                <h2>Notifications</h2>
+                <p>There are currently no notifications.</p>
+            </div>
+
+            <div id="records" class="panel-section">
+                <h2>Records</h2>
+                <label for="recordID"><strong>Record ID:</strong></label>
+                <input type="text" id="recordID" placeholder="Enter record ID to view details">
+                
+                <button onclick="fetchRecord()">Fetch Record</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Ration Card Popup -->
+    <div id="editPopup" class="popup">
+        <div class="popup-content">
+            <h3>Edit Ration Card Details</h3>
+            <label for="editCardNumber">Card Number:</label>
+            <input type="text" id="editCardNumber" placeholder="Enter card number">
+            
+            <label for="editCardType">Card Type:</label>
+            <input type="text" id="editCardType" placeholder="Enter card type">
+            
+            <label for="editExpiryDate">Expiry Date:</label>
+            <input type="date" id="editExpiryDate">
+            
+            <label for="editMemberCount">Member Count:</label>
+            <input type="number" id="editMemberCount" placeholder="Enter member count">
+            
+            <button onclick="changeDetails()">Change</button>
+            <button onclick="closeEditPopup()">Cancel</button>
+        </div>
+    </div>
+
+    <!-- Add Member Popup -->
+    <div id="addMemberPopup" class="popup">
+        <div class="popup-content">
+            <h3>Add New Member</h3>
+            <label for="memberName">Name:</label>
+            <input type="text" id="memberName" placeholder="Enter name">
+            
+            <label for="memberDob">Date of Birth:</label>
+            <input type="date" id="memberDob">
+            
+            <label for="memberAadhar">Aadhaar Number:</label>
+            <input type="text" id="memberAadhar" placeholder="Enter Aadhaar number">
+            
+            <label for="memberRelationship">Relationship:</label>
+            <input type="text" id="memberRelationship" placeholder="Enter relationship">
+            
+            <button onclick="addMember()">Add Member</button>
+            <button onclick="closeAddMemberPopup()">Cancel</button>
+        </div>
+    </div>
+
+    <script>
+        function showPanel(panelId) {
+            document.querySelectorAll('.panel-section').forEach(section => section.classList.remove('active'));
+            document.getElementById(panelId).classList.add('active');
+        }
+
+        function showEditPopup() {
+            document.getElementById("editPopup").style.display = "flex";
+        }
+
+        function closeEditPopup() {
+            document.getElementById("editPopup").style.display = "none";
+        }
+
+        function showAddMemberPopup() {
+            document.getElementById("addMemberPopup").style.display = "flex";
+        }
+
+        function closeAddMemberPopup() {
+            document.getElementById("addMemberPopup").style.display = "none";
+        }
+
+        function changeDetails() {
+            // Logic to update ration card details
+            closeEditPopup();
+        }
+
+        function addMember() {
+            // Logic to add a new member
+            closeAddMemberPopup();
+        }
+    </script>
+</body>
+</html>
+
+

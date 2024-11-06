@@ -89,6 +89,32 @@ app.get('/dashboard', async (req, res) => {
   }
 });
 
+app.get('/fps_dashboard', async (req, res) => {
+  if (!req.session.fps_id) {
+    return res.redirect('/');
+  }
+  try {
+    const [rows] = await db.query(
+      'SELECT shop_name, city,fnmae, lname FROM ration_card WHERE fps_id=?',
+      [req.session.fps_id]
+    );
+
+    if (rows.length === 0) {
+      return res.status(404).send("No ration card information found.");
+    }
+
+    const cardData = rows[0];
+    res.render('fps_dashboard', {
+      shop_name: cardData.shop_name,
+      city: cardData.city,
+      fname: cardData.fname,
+      contact: cardData.contact
+    });
+  } catch (err) {
+    console.error("Database query error:", err);
+    res.status(500).send("Internal server error");
+  }
+});
 // Login post
 app.post('/login', async (req, res) => {
   const { email, password } = req.body;
@@ -136,8 +162,8 @@ app.post('/fps-login', async (req, res) => {
       console.log('Invalid FPS ID or password');
       return res.status(404).send('Invalid FPS ID or password.');
     }
-
-    res.send('Logged in successfully!');
+    req.session.fps_id = rows[0].fps_id;
+    res.redirect("/fps_dashboard")
   } catch (err) {
     console.error('Error during login:', err);
     res.status(500).send('Internal server error');

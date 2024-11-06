@@ -39,7 +39,7 @@ create TABLE complaint (
     foreign key(ben_id) references beneficiary(ben_id)
 );
 CREATE TABLE ration_card (
-    ration_no INT PRIMARY KEY,
+    ration_no varchar(20) primary key,
     ben_id INT,
     expiry DATE,
     card_type VARCHAR(45) NOT NULL,
