@@ -269,10 +269,10 @@ app.post('/add_member', async (req, res) => {
     const updateCountQuery = 'UPDATE ration_card SET member_count = member_count + 1 WHERE ben_id = ?';
     await db.query(updateCountQuery, [req.session.ben_id]);
 
-    res.send("Member added successfully!");
+    res.redirect('/dashboard');
   } catch (err) {
     console.error("Error inserting data: ", err);
-    res.status(500).send("Database error");
+    res.redirect('/dashboard');
   }
 
 
