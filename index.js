@@ -303,6 +303,7 @@ app.post('/new_complaint', async (req, res) => {
     res.status(500).send("Database error");
   }  
 });
+
 app.get('eligibility_verification',(req,res)=>{
   res.redirect('/dashboard');
 })
@@ -343,8 +344,6 @@ app.post('/eligibility_verification', async (req, res) => {
         res.status(500).json({ success: false, message: 'An error occurred while processing the request.' });
     }
 });
-
-
 //add stock
 app.post('/add_stock', async (req, res) => {
   const { stock_name, quantity, stock_date } = req.body;
@@ -370,6 +369,24 @@ app.post('/add_stock', async (req, res) => {
   } catch (err) {
     console.error('Error inserting data:', err);
     res.status(500).json({ success: false, message: 'Database error' });
+  }
+});
+
+
+//show members
+app.get('/get_members', async (req, res) => {
+  if (!req.session.ben_id) {
+      return res.redirect('/');
+  }
+  try {
+      const [rows] = await db.query(
+          'SELECT name, dob, aadhaar_number, relationship FROM family_members WHERE ben_id = ?',
+          [req.session.ben_id]
+      );
+      res.json(rows);
+  } catch (err) {
+      console.error("Database query error:", err);
+      res.status(500).send("Internal server error");
   }
 });
 
