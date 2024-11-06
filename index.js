@@ -63,8 +63,8 @@ app.get('/new', (req, res) => {
   res.sendFile(path.join(__dirname, 'view', 'register.html'));
 });
 
-app.get("/add_stock", (req, res)=>{
-  res.sendFile(path.join(__dirname, "view", "addStock.ejs"));
+app.get('/add_stock', (req, res) => { 
+  res.render('addStock'); 
 });
 
 app.get('/dashboard', async (req, res) => {
@@ -308,9 +308,9 @@ app.post('/new_complaint', async (req, res) => {
 
 //add stock
 app.post('/add_stock', (req, res) => { 
-  const { stock_id, stock_name, fps_id, quantity } = req.body; 
-  const query = 'INSERT INTO stock (stock_id, stock_name, fps_id, quantity) VALUES (?, ?, ?, ?)'; 
-  db.query(query, [stock_id, stock_name, fps_id, quantity], (err, result) => { 
+  const { stock_id, stack_name, fps_id, quantity } = req.body; 
+  const query = 'INSERT INTO stock (stock_id, stack_name, fps_id, quantity) VALUES (?, ?, ?, ?)'; 
+  db.query(query, [stock_id, stack_name, fps_id, quantity], (err, result) => { 
     if (err) { console.error('Error inserting data:', err); 
       res.json({ success: false, message: 'Database error' }); 
     } else { 

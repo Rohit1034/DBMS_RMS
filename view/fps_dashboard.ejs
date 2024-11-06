@@ -169,7 +169,7 @@
         <!-- Sidebar Menu -->
         <div class="menu-bar">
             <ul>
-                <li><a href="#" onclick="showPanel('Add Stock')">Add Stock</a></li>
+                <li><a href="/add_stock">Add Stock</a></li>
                 <li><a href="#" onclick="showPanel('eligibilityVerification')">Grahak Records</a></li>
                 <li><a href="#" onclick="showPanel('newComplaint')">Eligibility Verification</a></li>
                 <li><a href="#" onclick="showPanel('notifications')">Notifications</a></li>
@@ -189,9 +189,9 @@
                 </div>
             </div>
 <!--add stock-->
-<div class ="content-panel"> 
+        <form action ="/add_stock" method = "post" class = "Add Stock">
+            <div id = "Add Stock" class ="panel-section">
             <h1>Add New Stock</h1>
-        <form id="stockForm">
             <div class="form-group">
                 <label for="stock_id">Stock ID</label>
                 <input type="text" id="stock_id" class="form-control" required>
@@ -208,31 +208,10 @@
                 <label for="quantity">Quantity</label>
                 <input type="number" id="quantity" class="form-control" required>
             </div>
-            <button  onclick="location.href='/fps_dashboard'" type="submit" class="btn btn-primary">Add Stock</button>
+            <button type="submit" class="btn btn-primary">Add Stock</button>
+        </div>
         </form>
-        <br>
-        <h2>Stock List</h2>
-        <table class="table table-bordered">
-            <thead>
-                <tr>
-                    <th>Stock ID</th>
-                    <th>Stock Name</th>
-                    <th>FPS ID</th>
-                    <th>Quantity</th>
-                </tr>
-            </thead>
-            <tbody id="stockTableBody">
-                <tr>
-                    <td colspan="4">No data available</td>
-                </tr>
-            </tbody>
-        </table>
-    </div>
     <script src="index.js"></script>
-</div>
-
-
-
         <!-- Content Panel -->
         <div class="content-panel">
             <div id="records" class="panel-section">
@@ -305,6 +284,10 @@
         function showPanel(panelId) {
             document.querySelectorAll('.panel-section').forEach(section => section.classList.remove('active'));
             document.getElementById(panelId).classList.add('active');
+        }
+
+        function addStock(){
+            document.getElementById("Add Stock").style.display = "flex";
         }
     </script>
 </body>
