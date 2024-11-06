@@ -77,3 +77,12 @@ CREATE TABLE family_members (
     relationship VARCHAR(50) NOT NULL,         -- Relationship to the beneficiary
     FOREIGN KEY (ben_id) REFERENCES beneficiary(ben_id) -- Assuming 'ben_id' exists in beneficiary table
 );
+
+CREATE TABLE eligibility (
+    ben_id INT UNIQUE,
+    eg_id INT AUTO_INCREMENT PRIMARY KEY,
+    annual_income DOUBLE,
+    occupation VARCHAR(45),
+    verification_status VARCHAR(100),
+    verified BOOLEAN
+);
