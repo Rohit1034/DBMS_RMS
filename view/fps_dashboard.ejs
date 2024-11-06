@@ -162,18 +162,17 @@
 </head>
 <body>
     <div class="main-panel">
-        <h1>Ration Dharak</h1>
+        <h1>FPS Dhashboard</h1>
     </div>
 
     <div class="container">
         <!-- Sidebar Menu -->
         <div class="menu-bar">
             <ul>
-                <li><a href="#" onclick="showPanel('rationCardDetails')">Ration Card Details</a></li>
-                <li><a href="#" onclick="showPanel('eligibilityVerification')">Eligibility Verification</a></li>
-                <li><a href="#" onclick="showPanel('newComplaint')">New Complaint</a></li>
+                <li><a href="#" onclick="showPanel('rationCardDetails')">Add Stock</a></li>
+                <li><a href="#" onclick="showPanel('eligibilityVerification')">Grahak Records</a></li>
+                <li><a href="#" onclick="showPanel('newComplaint')">Eligibility Verification</a></li>
                 <li><a href="#" onclick="showPanel('notifications')">Notifications</a></li>
-                <li><a href="#" onclick="showPanel('records')">Records</a></li>
             </ul>
         </div>
 
@@ -181,16 +180,12 @@
         <div class="content-panel">
             <!-- Ration Card Details Section -->
             <div id="rationCardDetails" class="panel-section active">
-                <h2>Ration Card Details</h2>
+                <h2>FPS Details</h2>
                 <div class="card-info">
-                    <p><strong>Card Number:</strong> <%=card_no%></p>
-                    <p><strong>Card Type:</strong> <%=card_type%></p>
-                    <p><strong>Expiry Date:</strong> <%=expiry%></p>
-                    <p><strong>Member Count:</strong><%=member_no%></p>
-                </div>
-                <div class="buttons">
-                    <button onclick="showEditPopup()">Change Ration Card Details</button>
-                    <button onclick="showAddMemberPopup()">Add Member</button>
+                    <p><strong>Shop Name: </strong> <%=shop_name%></p>
+                    <p><strong>Sevak Name: </strong> <%=fname%></p>
+                    <p><strong>City: </strong> <%=city%></p>
+                    <p><strong>contact: </strong><%=contact%></p>
                 </div>
             </div>
             

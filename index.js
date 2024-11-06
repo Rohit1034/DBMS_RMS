@@ -37,7 +37,9 @@ app.use(session({
   secret: 'your-secret-key',
   resave: false,
   saveUninitialized: true,
+  cookie: { secure: false } // Change to true if using HTTPS
 }));
+
 
 app.use((req, res, next) => {
   console.log(`Request for: ${req.url}`);
@@ -65,7 +67,6 @@ app.get('/dashboard', async (req, res) => {
   if (!req.session.ben_id) {
     return res.redirect('/');
   }
-
   try {
     const [rows] = await db.query(
       'SELECT ration_no, expiry, card_type, member_count FROM ration_card WHERE ben_id = ?',
@@ -90,25 +91,27 @@ app.get('/dashboard', async (req, res) => {
 });
 
 app.get('/fps_dashboard', async (req, res) => {
+  console.log(req.session); // Log session data for debugging
   if (!req.session.fps_id) {
     return res.redirect('/');
   }
   try {
     const [rows] = await db.query(
-      'SELECT shop_name, city,fnmae, lname FROM ration_card WHERE fps_id=?',
+      'SELECT shop_name, city, fname, lname, contact FROM fps WHERE fps_id = ?',
       [req.session.fps_id]
     );
 
     if (rows.length === 0) {
-      return res.status(404).send("No ration card information found.");
+      return res.status(404).send("No FPS information found.");
     }
 
-    const cardData = rows[0];
+    const fpsData = rows[0];
     res.render('fps_dashboard', {
-      shop_name: cardData.shop_name,
-      city: cardData.city,
-      fname: cardData.fname,
-      contact: cardData.contact
+      shop_name: fpsData.shop_name,
+      city: fpsData.city,
+      fname: fpsData.fname,
+      lname: fpsData.lname,
+      contact:fpsData.contact
     });
   } catch (err) {
     console.error("Database query error:", err);
@@ -145,7 +148,6 @@ app.post('/login', async (req, res) => {
     res.status(500).send('Internal server error');
   }
 });
-
 // FPS login post
 app.post('/fps-login', async (req, res) => {
   const { fps_id, password } = req.body;
@@ -155,44 +157,50 @@ app.post('/fps-login', async (req, res) => {
 
   try {
     const [rows] = await db.query(
-      'SELECT password FROM fps WHERE fps_id = ?',
+      'SELECT fps_id, password FROM fps WHERE fps_id = ?',
       [fps_id]
     );
+
     if (rows.length === 0 || rows[0].password !== password) {
       console.log('Invalid FPS ID or password');
       return res.status(404).send('Invalid FPS ID or password.');
     }
-    req.session.fps_id = rows[0].fps_id;
-    res.redirect("/fps_dashboard")
+
+    req.session.fps_id = rows[0].fps_id; // Correctly set the session
+    res.redirect("/fps_dashboard");
   } catch (err) {
     console.error('Error during login:', err);
     res.status(500).send('Internal server error');
   }
 });
 
+
+// New registration post
 // New registration post
 app.post('/register', async (req, res) => {
   const {
     email, password, fname, mname, lname, ration_no, city, 
-    street, state, pincode, dob, gender, member_count
+    street, state, pincode, dob, gender, card_type
   } = req.body;
 
-  if (!fname || !mname || !lname || !email || !password || !ration_no ||
-      !city || !street || !state || !pincode || !dob || !gender || !member_count) {
-    return res.status(400).send("Please fill all values properly.");
+  if (!fname || !lname || !email || !password || !ration_no ||
+      !city || !street || !state || !pincode || !dob || !gender) {
+    return res.status(400).send("Please fill all required fields properly.");
   }
 
   try {
-    const query = `INSERT INTO beneficiary (email, password, fname, mname, lname, ration_no, city, street, state, pincode, dob, gender, member_count) 
+    const query = `INSERT INTO beneficiary (email, password, fname, mname, lname, ration_no, city, street, state, pincode, dob, gender, card_type) 
       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
-    await db.query(query, [email, password, fname, mname, lname, ration_no, city, street, state, pincode, dob, gender, member_count]);
     
-    res.redirect('/');
+    await db.query(query, [email, password, fname, mname, lname, ration_no, city, street, state, pincode, dob, gender, card_type]);
+    
+    res.redirect('/');  // Redirect upon successful registration
   } catch (err) {
     console.error('Error inserting data:', err);
     res.status(500).send('Database error');
   }
 });
+
 
 // Register FPS post
 app.post('/register_fps', async (req, res) => {
@@ -219,6 +227,52 @@ app.post('/register_fps', async (req, res) => {
       res.status(500).send('Database error');
   }
 });
+
+app.post('/add_member', async (req, res) => {
+  const { name, dob, aadhar, relationship } = req.body;
+
+  if (!name || !dob || !aadhar || !relationship) {
+    return res.status(400).send("Please fill all required fields properly!");
+  }
+
+  try {
+    // Insert member into the family_members table
+    const query = 'INSERT INTO family_members (ben_id, name, dob, aadhaar_number, relationship) VALUES (?, ?, ?, ?, ?)';
+    await db.query(query, [req.session.ben_id, name, dob, aadhar, relationship]);
+
+    // Update the member_count in the beneficiary table
+    const updateBeneficiaryQuery = 'UPDATE beneficiary SET member_count = member_count + 1 WHERE ben_id = ?';
+    await db.query(updateBeneficiaryQuery, [req.session.ben_id]);
+    // Update member_count in the ration_card table
+    const updateCountQuery = 'UPDATE ration_card SET member_count = member_count + 1 WHERE ben_id = ?';
+    await db.query(updateCountQuery, [req.session.ben_id]);
+
+    res.send("Member added successfully!");
+  } catch (err) {
+    console.error("Error inserting data: ", err);
+    res.status(500).send("Database error");
+  }
+
+
+  // // Check if all required fields are present
+  // if (!name || !dob || !aadhar || !relationship) {
+  //     return res.status(400).send("Please fill all values properly.");
+  // }
+
+  // try {
+  //     // Insert member into the family_members table
+  //     const [result] = await db.query(
+  //         `INSERT INTO family_members (ben_id, name, dob, aadhaar_number, relationship) VALUES (?, ?, ?, ?, ?)`, 
+  //         [req.session.ben_id, name, dob, aadhar, relationship]
+  //     );
+
+  //     res.status(201).send("Member added successfully.");
+  // } catch (err) {
+  //     console.error("Error inserting data:", err);
+  //     res.status(500).send("Database error");
+  // }
+});
+
 
 // New complaint GET
 app.get('/new_complaint', (req, res) => {
