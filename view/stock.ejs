@@ -3,31 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Add Stock</title>
+    <title>Stock List</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
 </head>
 <body>
     <div class="container">
-        <h1>Add New Stock</h1>
-        <form id="stockForm">
-            <div class="form-group">
-                <label for="stock_id">Stock ID</label>
-                <input type="text" id="stock_id" class="form-control" required>
-            </div>
-            <div class="form-group">
-                <label for="stack_name">Stock Name</label>
-                <input type="text" id="stock_name" class="form-control" required>
-            </div>
-            <div class="form-group">
-                <label for="fps_id">FPS ID</label>
-                <input type="text" id="fps_id" class="form-control" required>
-            </div>
-            <div class="form-group">
-                <label for="quantity">Quantity</label>
-                <input type="number" id="quantity" class="form-control" required>
-            </div>
-            <button type="submit" class="btn btn-primary">Add Stock</button>
-        </form>
         <br>
         <h2>Stock List</h2>
         <table class="table table-bordered">
@@ -37,29 +17,45 @@
                     <th>Stock Name</th>
                     <th>FPS ID</th>
                     <th>Quantity</th>
+                    <th>Date</th>
                 </tr>
             </thead>
             <tbody id="stockTableBody">
-                <tr>
-                    <td colspan="4">No data available</td>
-                </tr>
+                <% if (stock && stock.length > 0) { %>
+                    <% stock.forEach(stock => { %>
+                        <tr>
+                            <td><%= stock.stock_id %></td>
+                            <td><%= stock.stock_name %></td>
+                            <td><%= fps_id %></td> <!-- Use fps_id here -->
+                            <td><%= stock.quantity %></td>
+                            <td><%= stock.stock_date %></td>
+                        </tr>
+                    <% }) %>
+                <% } else { %>
+                    <tr>
+                        <td colspan="5">No stock data available</td>
+                    </tr>
+                <% } %>
             </tbody>
         </table>
     </div>
+
     <script>
         document.getElementById('stockForm').addEventListener('submit', async function(event) {
             event.preventDefault();
+
             const stockId = document.getElementById('stock_id').value;
-            const stockName = document.getElementById('stack_name').value;
+            const stockName = document.getElementById('stock_name').value;
             const fpsId = document.getElementById('fps_id').value;
             const quantity = document.getElementById('quantity').value;
+            const stockDate = document.getElementById('stock_date').value;
 
             const response = await fetch('/add_stock', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ stock_id: stockId, stack_name: stockName, fps_id: fpsId, quantity: quantity }),
+                body: JSON.stringify({ stock_id: stockId, stock_name: stockName, fps_id: fpsId, quantity: quantity, stock_date: stockDate }),
             });
 
             const result = await response.json();
@@ -82,9 +78,13 @@
                 quantityCell.textContent = quantity;
                 newRow.appendChild(quantityCell);
 
+                const stockDateCell = document.createElement('td');
+                stockDateCell.textContent = stockDate;
+                newRow.appendChild(stockDateCell);
+
                 const tableBody = document.getElementById('stockTableBody');
-                if (tableBody.children[0].textContent === 'No data available') {
-                    tableBody.innerHTML = '';
+                if (tableBody.children[0].textContent === 'No stock data available') {
+                    tableBody.innerHTML = '';  // Clear the "No stock data available" row
                 }
                 tableBody.appendChild(newRow);
 

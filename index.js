@@ -59,13 +59,28 @@ app.get('/new_fps', (req, res) => {
   res.sendFile(path.join(__dirname, 'view', 'fps_register.html'));
 });
 
-app.get('/new', (req, res) => {
-  res.sendFile(path.join(__dirname, 'view', 'register.html'));
+app.get('/added_stock', async (req, res) => {
+  if (!req.session.fps_id) {
+    return res.redirect('/');  // Redirect to login if no fps_id in session
+  }
+
+  try {
+    const [rows] = await db.query(
+      'SELECT stock_id, stock_name, quantity, stock_date FROM stock WHERE fps_id = ?',
+      [req.session.fps_id]
+    );
+
+    // Pass the `fps_id` along with the stock data
+    res.render('stock', {
+      stock: rows,           // Stock data to display
+      fps_id: req.session.fps_id  // Pass fps_id to the template
+    });
+  } catch (err) {
+    console.error('Error fetching stock data:', err);
+    res.status(500).send('Database error');
+  }
 });
 
-app.get('/add_stock', (req, res) => { 
-  res.render('addStock'); 
-});
 
 app.get('/dashboard', async (req, res) => {
   if (!req.session.ben_id) {
@@ -115,7 +130,8 @@ app.get('/fps_dashboard', async (req, res) => {
       city: fpsData.city,
       fname: fpsData.fname,
       lname: fpsData.lname,
-      contact:fpsData.contact
+      contact:fpsData.contact,
+      fps_id:req.session.fps_id
     });
   } catch (err) {
     console.error("Database query error:", err);
@@ -155,6 +171,7 @@ app.post('/login', async (req, res) => {
 // FPS login post
 app.post('/fps-login', async (req, res) => {
   const { fps_id, password } = req.body;
+  console.log(req.body);
   if (!fps_id || !password) {
     return res.status(400).send("FPS ID and password are required.");
   }
@@ -225,7 +242,8 @@ app.post('/register_fps', async (req, res) => {
       const [result] = await db.query(query, [fname, mname, lname, password, contact, city, street, state, pincode, shop_name]);
 
       const newFpsId = result.insertId;
-      res.send(`User registered successfully! Your FPS ID is ${newFpsId}`);
+      res.redirect('fps_dashboard');
+      
   } catch (err) {
       console.error('Error inserting data:', err);
       res.status(500).send('Database error');
@@ -328,16 +346,31 @@ app.post('/eligibility_verification', async (req, res) => {
 
 
 //add stock
-app.post('/add_stock', (req, res) => { 
-  const { stock_id, stack_name, fps_id, quantity } = req.body; 
-  const query = 'INSERT INTO stock (stock_id, stack_name, fps_id, quantity) VALUES (?, ?, ?, ?)'; 
-  db.query(query, [stock_id, stack_name, fps_id, quantity], (err, result) => { 
-    if (err) { console.error('Error inserting data:', err); 
-      res.json({ success: false, message: 'Database error' }); 
-    } else { 
-      res.json({ success: true }); 
-    } 
-  }); 
+app.post('/add_stock', async (req, res) => {
+  const { stock_name, quantity, stock_date } = req.body;
+
+  // Validate inputs
+  if (!stock_name || !quantity || !stock_date) {
+    return res.status(400).json({ success: false, message: 'All fields (stock_name, quantity, stock_date) are required.' });
+  }
+
+  // Ensure fps_id exists in the session
+  if (!req.session.fps_id) {
+    return res.status(401).json({ success: false, message: 'Unauthorized: No FPS ID found in session.' });
+  }
+
+  try {
+    const query = 'INSERT INTO stock (stock_name, fps_id, quantity, stock_date) VALUES (?, ?, ?, ?)';
+    
+    // Insert the stock data into the database
+    await db.query(query, [stock_name, req.session.fps_id, quantity, stock_date]);
+
+    // Redirect on success
+    res.redirect('/added_stock');
+  } catch (err) {
+    console.error('Error inserting data:', err);
+    res.status(500).json({ success: false, message: 'Database error' });
+  }
 });
 
 // Forgot password page

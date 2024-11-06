@@ -87,7 +87,8 @@ CREATE TABLE eligibility (
 );
 CREATE TABLE stock (
     stock_id int AUTO_INCREMENT primary key,
-    stack_name varchar(20) not null,  
+    stock_name varchar(20) not null,  
     fps_id int, 
     quantity int, 
+    stock_date DATE,
     foreign key(fps_id) REFERENCES fps(fps_id));
