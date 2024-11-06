@@ -39,13 +39,15 @@ create TABLE complaint (
     foreign key(ben_id) references beneficiary(ben_id)
 );
 CREATE TABLE ration_card (
-    ration_no INT PRIMARY KEY,
+    ration_no varchar(20) primary key,
     ben_id INT,
     expiry DATE,
     card_type VARCHAR(45) NOT NULL,
     member_count INT,
     FOREIGN KEY (ben_id) REFERENCES beneficiary(ben_id)
 );
+
+alter table ration_card add column status varchar(20) not null;
 
 
 CREATE TRIGGER insert_into_ration_card_after_beneficiary_insert
@@ -86,3 +88,9 @@ CREATE TABLE eligibility (
     verification_status VARCHAR(100),
     verified BOOLEAN
 );
+CREATE TABLE stock (
+    stock_id int AUTO_INCREMENT primary key,
+    stack_name varchar(20) not null,  
+    fps_id int, 
+    quantity int, 
+    foreign key(fps_id) REFERENCES fps(fps_id));

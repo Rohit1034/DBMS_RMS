@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Stock</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Add New Stock</h1>
+        <form id="stockForm">
+            <div class="form-group">
+                <label for="stock_id">Stock ID</label>
+                <input type="text" id="stock_id" class="form-control" required>
+            </div>
+            <div class="form-group">
+                <label for="stack_name">Stock Name</label>
+                <input type="text" id="stock_name" class="form-control" required>
+            </div>
+            <div class="form-group">
+                <label for="fps_id">FPS ID</label>
+                <input type="text" id="fps_id" class="form-control" required>
+            </div>
+            <div class="form-group">
+                <label for="quantity">Quantity</label>
+                <input type="number" id="quantity" class="form-control" required>
+            </div>
+            <button type="submit" class="btn btn-primary">Add Stock</button>
+        </form>
+        <br>
+        <h2>Stock List</h2>
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Stock ID</th>
+                    <th>Stock Name</th>
+                    <th>FPS ID</th>
+                    <th>Quantity</th>
+                </tr>
+            </thead>
+            <tbody id="stockTableBody">
+                <tr>
+                    <td colspan="4">No data available</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <script>
+        document.getElementById('stockForm').addEventListener('submit', async function(event) {
+            event.preventDefault();
+            const stockId = document.getElementById('stock_id').value;
+            const stockName = document.getElementById('stack_name').value;
+            const fpsId = document.getElementById('fps_id').value;
+            const quantity = document.getElementById('quantity').value;
+
+            const response = await fetch('/add_stock', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ stock_id: stockId, stack_name: stockName, fps_id: fpsId, quantity: quantity }),
+            });
+
+            const result = await response.json();
+            if (result.success) {
+                const newRow = document.createElement('tr');
+
+                const stockIdCell = document.createElement('td');
+                stockIdCell.textContent = stockId;
+                newRow.appendChild(stockIdCell);
+
+                const stockNameCell = document.createElement('td');
+                stockNameCell.textContent = stockName;
+                newRow.appendChild(stockNameCell);
+
+                const fpsIdCell = document.createElement('td');
+                fpsIdCell.textContent = fpsId;
+                newRow.appendChild(fpsIdCell);
+
+                const quantityCell = document.createElement('td');
+                quantityCell.textContent = quantity;
+                newRow.appendChild(quantityCell);
+
+                const tableBody = document.getElementById('stockTableBody');
+                if (tableBody.children[0].textContent === 'No data available') {
+                    tableBody.innerHTML = '';
+                }
+                tableBody.appendChild(newRow);
+
+                document.getElementById('stockForm').reset();
+            } else {
+                alert('Failed to add stock. Please try again.');
+            }
+        });
+    </script>
+</body>
+</html>

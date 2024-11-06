@@ -37,7 +37,9 @@ app.use(session({
   secret: 'your-secret-key',
   resave: false,
   saveUninitialized: true,
+  cookie: { secure: false } // Change to true if using HTTPS
 }));
+
 
 app.use((req, res, next) => {
   console.log(`Request for: ${req.url}`);
@@ -59,6 +61,10 @@ app.get('/new_fps', (req, res) => {
 
 app.get('/new', (req, res) => {
   res.sendFile(path.join(__dirname, 'view', 'register.html'));
+});
+
+app.get('/add_stock', (req, res) => { 
+  res.render('addStock'); 
 });
 
 app.get('/dashboard', async (req, res) => {
@@ -88,6 +94,34 @@ app.get('/dashboard', async (req, res) => {
   }
 });
 
+app.get('/fps_dashboard', async (req, res) => {
+  console.log(req.session); // Log session data for debugging
+  if (!req.session.fps_id) {
+    return res.redirect('/');
+  }
+  try {
+    const [rows] = await db.query(
+      'SELECT shop_name, city, fname, lname, contact FROM fps WHERE fps_id = ?',
+      [req.session.fps_id]
+    );
+
+    if (rows.length === 0) {
+      return res.status(404).send("No FPS information found.");
+    }
+
+    const fpsData = rows[0];
+    res.render('fps_dashboard', {
+      shop_name: fpsData.shop_name,
+      city: fpsData.city,
+      fname: fpsData.fname,
+      lname: fpsData.lname,
+      contact:fpsData.contact
+    });
+  } catch (err) {
+    console.error("Database query error:", err);
+    res.status(500).send("Internal server error");
+  }
+});
 // Login post
 app.post('/login', async (req, res) => {
   const { email, password } = req.body;
@@ -127,20 +161,23 @@ app.post('/fps-login', async (req, res) => {
 
   try {
     const [rows] = await db.query(
-      'SELECT password FROM fps WHERE fps_id = ?',
+      'SELECT fps_id, password FROM fps WHERE fps_id = ?',
       [fps_id]
     );
+
     if (rows.length === 0 || rows[0].password !== password) {
       console.log('Invalid FPS ID or password');
       return res.status(404).send('Invalid FPS ID or password.');
     }
 
-    res.send('Logged in successfully!');
+    req.session.fps_id = rows[0].fps_id; // Correctly set the session
+    res.redirect("/fps_dashboard");
   } catch (err) {
     console.error('Error during login:', err);
     res.status(500).send('Internal server error');
   }
 });
+
 
 // New registration post
 // New registration post
@@ -287,6 +324,20 @@ app.post('/eligibility_verification', async (req, res) => {
         console.error('Error processing request:', err);
         res.status(500).json({ success: false, message: 'An error occurred while processing the request.' });
     }
+});
+
+
+//add stock
+app.post('/add_stock', (req, res) => { 
+  const { stock_id, stack_name, fps_id, quantity } = req.body; 
+  const query = 'INSERT INTO stock (stock_id, stack_name, fps_id, quantity) VALUES (?, ?, ?, ?)'; 
+  db.query(query, [stock_id, stack_name, fps_id, quantity], (err, result) => { 
+    if (err) { console.error('Error inserting data:', err); 
+      res.json({ success: false, message: 'Database error' }); 
+    } else { 
+      res.json({ success: true }); 
+    } 
+  }); 
 });
 
 // Forgot password page
