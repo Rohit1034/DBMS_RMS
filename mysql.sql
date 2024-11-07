@@ -17,6 +17,8 @@ CREATE TABLE beneficiary (
     member_count INT DEFAULT 1,
     card_type varchar(20)
 );
+ALTER TABLE beneficiary
+ADD COLUMN aadhaar_number VARCHAR(12) UNIQUE;
 CREATE TABLE fps (
     fps_id INT AUTO_INCREMENT PRIMARY KEY,  -- fps_id is now auto-incremented
     fname VARCHAR(255) NOT NULL,
@@ -90,7 +92,8 @@ CREATE TABLE eligibility (
     verification_status VARCHAR(100) DEFAULT 'pending',
     verified BOOLEAN
 );
-
+ALTER TABLE eligibility
+ADD COLUMN aadhaar_number VARCHAR(12) UNIQUE;
 CREATE TABLE stock (
     stock_id int AUTO_INCREMENT primary key,
     stock_name varchar(20) not null,  

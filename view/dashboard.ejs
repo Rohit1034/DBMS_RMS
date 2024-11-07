@@ -315,6 +315,7 @@
                   <form id="eligibilityForm" method="post">
                     <label for="income"><strong>Annual Income:</strong></label>
                     <input type="text" name="annual_income" placeholder="Annual Income" required>
+
                     <label for="occupation"><strong>Occupation:</strong></label>
                     <input type="text" name="occupation" placeholder="Occupation" required>
                     <button type="submit">Verify Eligibility</button>
@@ -363,7 +364,9 @@
                             <% notifications.forEach(notification => { %>
                                 <tr>
                                     <td style="border: 1px solid #ddd; padding: 8px;"><%= notification.message %></td>
-                                    <td style="border: 1px solid #ddd; padding: 8px;"><%= new Date(notification.notification_time).toLocaleString() %></td>
+                                    <td style="border: 1px solid #ddd; padding: 8px;"><%= new Date(notification.timesent).toLocaleString() %>
+
+                                    </td>
                                 </tr>
                             <% }) %>
                         </tbody>
@@ -526,8 +529,8 @@
                     const row = document.createElement("tr"); 
                     row.innerHTML = ` 
                     <td>${member.name}</td> 
-                    <td>${member.dob}</td> 
-                    <td>${member.aadhar}</td> 
+                    <td>${new Date(member.dob).getDate().toString().padStart(2, '0')}-${(new Date(member.dob).getMonth() + 1).toString().padStart(2, '0')}-${new Date(member.dob).getFullYear()}</td>
+                    <td>${member.aadhaar_number}</td> 
                     <td>${member.relationship}</td>
                      `; tbody.appendChild(row); 
                     }); 

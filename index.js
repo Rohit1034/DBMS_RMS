@@ -269,19 +269,19 @@ app.post('/fps-login', async (req, res) => {
 app.post('/register', async (req, res) => {
   const {
     email, password, fname, mname, lname, ration_no, city, 
-    street, state, pincode, dob, gender, card_type
+    street, state, pincode, dob, gender, card_type,aadhaar_number
   } = req.body;
 
   if (!fname || !lname || !email || !password || !ration_no ||
-      !city || !street || !state || !pincode || !dob || !gender) {
+      !city || !street || !state || !pincode || !dob || !gender ||!aadhaar_number) {
     return res.status(400).send("Please fill all required fields properly.");
   }
 
   try {
-    const query = `INSERT INTO beneficiary (email, password, fname, mname, lname, ration_no, city, street, state, pincode, dob, gender, card_type) 
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
+    const query = `INSERT INTO beneficiary (email, password, fname, mname, lname, ration_no, city, street, state, pincode, dob, gender, card_type,aadhaar_number) 
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?)`;
     
-    await db.query(query, [email, password, fname, mname, lname, ration_no, city, street, state, pincode, dob, gender, card_type]);
+    await db.query(query, [email, password, fname, mname, lname, ration_no, city, street, state, pincode, dob, gender, card_type,aadhaar_number]);
     
     res.redirect('/');  // Redirect upon successful registration
   } catch (err) {
@@ -298,19 +298,26 @@ app.post('/register_fps', async (req, res) => {
       street, state, pincode, shop_name
   } = req.body;
 
+  // Check for missing values
   if (!fname || !mname || !lname || !contact || !password || !shop_name ||
       !city || !street || !state || !pincode) {
       return res.status(400).send("Please fill all values properly.");
   }
 
   try {
+      // Insert new FPS record into the database
       const query = `INSERT INTO fps (fname, mname, lname, password, contact, city, street, state, pincode, shop_name) 
-                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
+                      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
       
       const [result] = await db.query(query, [fname, mname, lname, password, contact, city, street, state, pincode, shop_name]);
-
+      
       const newFpsId = result.insertId;
-      res.redirect('fps_dashboard');
+
+      // Set fps_id in the session
+      req.session.fps_id = newFpsId;
+
+      // Redirect to the dashboard
+      res.redirect('/fps_dashboard');
       
   } catch (err) {
       console.error('Error inserting data:', err);
@@ -328,7 +335,7 @@ app.post('/add_member', async (req, res) => {
   try {
     // Insert member into the family_members table
     const query = 'INSERT INTO family_members (ben_id, name, dob, aadhaar_number, relationship) VALUES (?, ?, ?, ?, ?)';
-    await db.query(query, [req.session.ben_id, name, dob, aadhar, relationship]);
+    await db.query(query, [req.session.ben_id, name, dob, aadhaar, relationship]);
 
     // Update the member_count in the beneficiary table based on actual member count in family_members
     const updateBeneficiaryQuery = `
@@ -491,6 +498,7 @@ app.get('/get_members', async (req, res) => {
           'SELECT name, dob, aadhaar_number, relationship FROM family_members WHERE ben_id = ?',
           [req.session.ben_id]
       );
+      console.log(rows);
       res.json(rows);
   } catch (err) {
       console.error("Database query error:", err);
@@ -499,22 +507,7 @@ app.get('/get_members', async (req, res) => {
 });
 
 
-//show members
-app.get('/get_members', async (req, res) => {
-  if (!req.session.ben_id) {
-      return res.redirect('/');
-  }
-  try {
-      const [rows] = await db.query(
-          'SELECT name, dob, aadhaar_number, relationship FROM family_members WHERE ben_id = ?',
-          [req.session.ben_id]
-      );
-      res.json(rows);
-  } catch (err) {
-      console.error("Database query error:", err);
-      res.status(500).send("Internal server error");
-  }
-});
+
 app.post('/add_record', async (req, res) => {
   const { ben_id, item_name, quantity_distributed, distribution_date } = req.body;
 
@@ -532,19 +525,46 @@ app.post('/add_record', async (req, res) => {
       return res.redirect('/fps_dashboard?error=Beneficiary ID does not exist');  
     }
 
-    // Proceed with inserting the record if ben_id exists
-    const query = `
+    // Check if the stock for the item is available and sufficient
+    const [stockRows] = await db.query(
+      'SELECT quantity FROM stock WHERE stock_name = ? AND fps_id = ?',
+      [item_name, req.session.fps_id]
+    );
+
+    if (stockRows.length === 0) {
+      // If item is not found in stock for the FPS
+      return res.redirect('/fps_dashboard?error=Item not found in stock');
+    }
+
+    const stockQuantity = stockRows[0].quantity;
+
+    if (stockQuantity < quantity_distributed) {
+      // If stock quantity is insufficient
+      return res.redirect('/fps_dashboard?error=Insufficient stock quantity for distribution');
+    }
+
+    // Proceed with inserting the record if the stock is sufficient
+    const insertQuery = `
       INSERT INTO record (ben_ID, fps_id, item_name, Quantity_distributed, distribution_date)
       VALUES (?, ?, ?, ?, ?)
     `;
 
-    await db.query(query, [
+    await db.query(insertQuery, [
       ben_id,                // Beneficiary ID from the form
       req.session.fps_id,    // FPS ID from the session
       item_name,             // Item name from the form
       quantity_distributed,  // Quantity distributed from the form
       distribution_date      // Distribution date from the form
     ]);
+
+    // Subtract quantity from stock for the specific item_name and fps_id
+    const stockUpdateQuery = `
+      UPDATE stock 
+      SET quantity = quantity - ?
+      WHERE stock_name = ? AND fps_id = ?
+    `;
+
+    await db.query(stockUpdateQuery, [quantity_distributed, item_name, req.session.fps_id]);
 
     // Insert a notification after the record has been added
     const message = `A new record has been added for Item: ${item_name}, Quantity: ${quantity_distributed}.`;
@@ -555,12 +575,13 @@ app.post('/add_record', async (req, res) => {
     );
 
     // Redirect to the dashboard with a success message
-    return res.redirect('/fps_dashboard?message=Record added and notification sent successfully');
+    return res.redirect('/fps_dashboard?message=Record added, stock updated, and notification sent successfully');
   } catch (err) {
     console.error('Error processing request:', err);
     res.status(500).json({ success: false, message: 'Database error' });
   }
 });
+
 
 // Route to handle updating complaint status
 app.post('/update_complaint_status/:complaint_id', async (req, res) => {
