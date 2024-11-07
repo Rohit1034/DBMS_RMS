@@ -59,7 +59,7 @@ app.get('/new_fps', (req, res) => {
   res.sendFile(path.join(__dirname, 'view', 'fps_register.html'));
 });
 
-app.get('/added_stock', async (req, res) => {
+app.get('/get_stock', async (req, res) => {
   if (!req.session.fps_id) {
     return res.redirect('/');  // Redirect to login if no fps_id in session
   }
@@ -479,7 +479,7 @@ app.post('/add_stock', async (req, res) => {
     }
 
     // Redirect on success
-    res.redirect('/added_stock');
+    res.redirect('/get_stock');
   } catch (err) {
     console.error('Error inserting data:', err);
     res.status(500).json({ success: false, message: 'Database error' });

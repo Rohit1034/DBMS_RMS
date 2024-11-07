@@ -10,20 +10,33 @@
         /* General Styles */
         body {
             font-family: Arial, sans-serif;
-            background-image: url('https://png.pngtree.com/background/20211215/original/pngtree-dove-yellow-indian-independence-day-background-picture-image_1456724.jpg');
+            background-image: url('https://www.equentis.com/blog/wp-content/uploads/2022/10/History-of-Stock-Market.jpg');
             background-size: cover;
             background-attachment: fixed;
             margin: 0;
             color: #333;
+            position: relative;
         }
         
+        /* Overlay */
+        body::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.4); /* 40% opacity black overlay */
+            z-index: -1;
+        }
+
         .main-panel {
             text-align: center;
             padding: 20px;
             background-color: #004d4d;
             color: white;
         }
-        
+
         h1 {
             margin: 0;
             font-size: 2.5em;
@@ -33,76 +46,61 @@
             display: flex;
             height: calc(100vh - 80px);
             overflow: hidden;
-        }
-
-        /* Sidebar Menu */
-        .menu-bar {
-            width: 220px;
-            background-color: #006666;
-            color: white;
-            padding-top: 20px;
-        }
-
-        .menu-bar ul {
-            list-style: none;
-            padding: 0;
-        }
-
-        .menu-bar ul li {
-            padding: 15px;
-            cursor: pointer;
-        }
-
-        .menu-bar ul li:hover {
-            background-color: #004d4d;
-        }
-
-        .menu-bar ul li a {
-            color: white;
-            text-decoration: none;
-            font-weight: bold;
-            display: block;
-        }
-
-        /* Content Panel */
-        .content-panel {
-            flex-grow: 1;
-            padding: 20px;
-            background: rgba(255, 255, 255, 0.9);
-            overflow-y: auto;
-        }
-
-        .panel-section {
-            display: none;
-        }
-
-        .panel-section.active {
-            display: block;
+            flex-direction: column;
+            align-items: center;
         }
 
         h2 {
             color: #006666;
-            border-bottom: 2px solid #004d4d;
-            padding-bottom: 10px;
+            margin-bottom: 20px;
+            font-size: 2.2em;
+            font-weight: bold;
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
         }
 
-        .card-info p {
-            margin: 10px 0;
+        /* Enhanced Table Styles */
+        .table {
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .table thead {
+            background-color: #006666;
+            color: white;
+        }
+
+        .table thead th {
+            text-align: center;
+            padding: 12px;
             font-weight: bold;
         }
 
-        button {
-            background-color: #006666;
-            color: white;
-            padding: 10px 15px;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            margin-right: 10px;
+        .table tbody td {
+            text-align: center;
+            padding: 12px;
+            vertical-align: middle;
         }
 
-        button:hover {
-            background-color: #004d4d;
+        .table tbody tr:nth-child(odd) {
+            background-color: #f9f9f9;
+        }
+
+        .table tbody tr:nth-child(even) {
+            background-color: #f1f1f1;
+        }
+
+        .table tbody tr:hover {
+            background-color: #e6f7f7;
+        }
+
+        .table td, .table th {
+            border: 1px solid #ddd;
+        }
+
+        .table-responsive {
+            width: 100%;
+            overflow-x: auto;
         }
 
         /* Popup styling */
@@ -129,40 +127,136 @@
         .popup-content h3 {
             margin-top: 0;
         }
-    </style>
+
+        /* Button Hover effect */
+        button {
+            background-color: #006666;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-right: 10px;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #004d4d;
+        }
+
+        /* Add Stock Form Styles */
+        .form-container {
+            margin-top: 20px;
+            max-width: 600px;
+            width: 100%;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            background-color: #ffffffb3; /* Slight opacity for form background */
+        }
+        /* General Styles */
+body {
+    font-family: Arial, sans-serif;
+    background-image: url('https://www.equentis.com/blog/wp-content/uploads/2022/10/History-of-Stock-Market.jpg');
+    background-size: cover;
+    background-attachment: fixed;
+    margin: 0;
+    color: #333;
+    position: relative;
+    min-height: 100vh; /* Ensures body takes the full height of the screen */
+}
+
+/* Overlay */
+body::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.4); /* 40% opacity black overlay */
+    z-index: -1; /* Keeps the overlay behind content */
+}
+
+.container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh; /* Ensures container spans the full height of the screen */
+    padding: 20px;
+    z-index: 1; /* Keeps content in front of overlay */
+}
+
+h2 {
+    color: #6edede;
+    margin-bottom: 20px;
+    font-size: 2.2em;
+    font-weight: bold;
+    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
+}
+h2 {
+    color: #ffffff; /* White color for text */
+    margin-bottom: 20px;
+    font-size: 2.5em; /* Slightly larger font size for prominence */
+    font-weight: bold;
+    text-align: center;
+    text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.7); /* Shadow for text */
+}
+
+.table {
+    border-radius: 10px; /* Rounds the corners of the table */
+    overflow: hidden; /* Ensures content doesn't overflow the rounded corners */
+    border: 1px solid #ddd; /* Light border to make the rounded corners visible */
+}
+
+
+
+.table th {
+    background-color: #006666; /* Darker background for header */
+    color: white;
+}
+
+.table td {
+    background-color: rgba(255, 255, 255, 0.8); /* Slightly translucent background for table cells */
+}
+/* Table and other styling remain unchanged */
+
+    </style>    
 </head>
 <body>
     <div class="container">
-        <br>
         <h2>Stock List</h2>
-        <table class="table table-bordered">
-            <thead>
-                <tr>
-                    <th>Stock ID</th>
-                    <th>Stock Name</th>
-                    <th>FPS ID</th>
-                    <th>Quantity</th>
-                    <th>Date</th>
-                </tr>
-            </thead>
-            <tbody id="stockTableBody">
-                <% if (stock && stock.length > 0) { %>
-                    <% stock.forEach(stock => { %>
-                        <tr>
-                            <td><%= stock.stock_id %></td>
-                            <td><%= stock.stock_name %></td>
-                            <td><%= fps_id %></td> <!-- Use fps_id here -->
-                            <td><%= stock.quantity %></td>
-                            <td><%= stock.stock_date %></td>
-                        </tr>
-                    <% }) %>
-                <% } else { %>
+        <div class="table-responsive">
+            <table class="table table-bordered">
+                <thead>
                     <tr>
-                        <td colspan="5">No stock data available</td>
+                        <th>Stock ID</th>
+                        <th>Stock Name</th>
+                        <th>FPS ID</th>
+                        <th>Quantity</th>
+                        <th>Date</th>
                     </tr>
-                <% } %>
-            </tbody>
-        </table>
+                </thead>
+                <tbody id="stockTableBody">
+                    <% if (stock && stock.length > 0) { %>
+                        <% stock.forEach(stock => { %>
+                            <tr>
+                                <td><%= stock.stock_id %></td>
+                                <td><%= stock.stock_name %></td>
+                                <td><%= fps_id %></td>
+                                <td><%= stock.quantity %></td>
+                                <td><%= stock.stock_date %></td>
+                            </tr>
+                        <% }) %>
+                    <% } else { %>
+                        <tr>
+                            <td colspan="5" class="text-center">No stock data available</td>
+                        </tr>
+                    <% } %>
+                </tbody>
+            </table>
+        </div>
     </div>
 
     <script>
