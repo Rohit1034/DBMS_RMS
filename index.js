@@ -241,7 +241,7 @@ app.post('/fps-login', async (req, res) => {
   const { fps_id, password } = req.body;
   console.log(req.body);
   if (!fps_id || !password) {
-    return res.status(400).send("FPS ID and password are required.");
+    return res.redirect('/fps');
   }
 
   try {
@@ -252,7 +252,7 @@ app.post('/fps-login', async (req, res) => {
 
     if (rows.length === 0 || rows[0].password !== password) {
       console.log('Invalid FPS ID or password');
-      return res.status(404).send('Invalid FPS ID or password.');
+      return res.redirect('/fps');
     }
 
     req.session.fps_id = rows[0].fps_id; // Correctly set the session
