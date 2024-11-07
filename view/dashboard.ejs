@@ -1,33 +1,4 @@
-<!-- <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="utf-8">
-    <meta name="author" content="Kodinger">
-    <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>Dashboard &mdash; Bootstrap 4 Login Page Snippet</title>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-    <link rel="stylesheet" href="../public/css/my-login.css">
-</head>
 
-<body class="Dashboard">
-    <div class="card-body" style="background-color:rgb(237, 125, 27);"></div>
-    <section class="h-100 bg-ba">
-        
-        <div class="container h-100">
-            <div class="row justify-content-md-center h-100">
-                <div class="card-wrapper"></div>
-                    <div class="card-body">
-                        <div class="form-group m-0">
-                            <button onclick="location.href='/new_complaint'" type="button" class="btn btn-primary btn-block">New Complaint</button>
-                        </div>  
-                    </div>
-                    
-                </div>
-            </div>
-        </div>
-    </section>
-
-</body> -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -178,6 +149,83 @@
             background-color: #f1f1f1;
         }
     </style>
+    <style>
+        /* Style for the entire panel */
+        #records {
+          margin-top: 20px;
+          padding: 20px;
+          border: 1px solid #ddd;
+          border-radius: 10px;
+          background-color: #fafafa;
+          box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+      
+        /* Header of the records section */
+        #records h2 {
+          margin-bottom: 15px;
+          font-size: 24px;
+          color: #333;
+          font-weight: 600;
+        }
+      
+        /* Table styling */
+        #records table {
+          width: 100%;
+          border-collapse: collapse;
+          background-color: #fff;
+          border-radius: 8px;
+          overflow: hidden;
+          box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+      
+        /* Table header style */
+        #records th {
+          padding: 12px 15px;
+          background-color: #4CAF50;
+          color: white;
+          text-align: left;
+          font-size: 16px;
+          font-weight: bold;
+          text-transform: uppercase;
+        }
+      
+        /* Table body style */
+        #records td {
+          padding: 10px 15px;
+          text-align: left;
+          font-size: 14px;
+          border-bottom: 1px solid #ddd;
+        }
+      
+        /* Zebra striping for table rows */
+        #records tr:nth-child(even) {
+          background-color: #f9f9f9;
+        }
+      
+        #records tr:hover {
+          background-color: #f1f1f1;
+          cursor: pointer;
+        }
+      
+        /* No records message */
+        #records p {
+          font-size: 16px;
+          color: #555;
+          text-align: center;
+          padding: 20px;
+        }
+      
+        /* Responsive design for smaller screens */
+        @media (max-width: 600px) {
+          #records table {
+            font-size: 12px;
+          }
+      
+          #records th, #records td {
+            padding: 8px 10px;
+          }
+        }
+      </style>
 </head>
 <body>
     <div class="main-panel">
@@ -249,17 +297,21 @@
                                 
                     <label for="complaint_type">Select Complaint Type:</label>
                     <select id="complaint_type" name="complaint_type">
-                        <option value="GEN">General Inquiry</option>
-                        <option value="TECH">Technical Issue</option>
-                        <option value="BILL">Billing Issue</option>
-                        <option value="SERV">Service Complaint</option>
-                        <option value="DEL">Delivery Issue</option>
-                        <option value="FEED">Feedback</option>
+                        <option value="General Inquiry">General Inquiry</option>
+                        <option value="Technical Issue">Technical Issue</option>
+                        <option value="Billing Issue">Billing Issue</option>
+                        <option value="Service Complaint">Service Complaint</option>
+                        <option value="Delivery Issue">Delivery Issue</option>
+                        <option value="Feedback">Feedback</option>
                         <option value="OTHER">Other</option>
                     </select>
                     <div class="form-group">
                         <label for="description_complaint">Description (max 20 words)</label>
                         <input id="description_complaint" type="text" class="form-control" name="description_complaint" placeholder="Enter Description" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="fps_id">Description (max 20 words)</label>
+                        <input id="fps_id" type="text" class="form-control" name="fps_id" placeholder="FPS ID" required>
                     </div>
                     
                     <div class="form-group m-0">
@@ -273,11 +325,33 @@
             </div>
 
             <div id="records" class="panel-section">
-                <h2>Records</h2>
-                <label for="recordID"><strong>Record ID:</strong></label>
-                <input type="text" id="recordID" placeholder="Enter record ID to view details">
                 
-                <button onclick="fetchRecord()">Fetch Record</button>
+                    <h2>Distribution Records</h2>
+                    
+                    <!-- Check if there are records -->
+                    <% if (records.length > 0) { %>
+                      <table>
+                        <thead>
+                          <tr>
+                            <th>Item Name</th>
+                            <th>Quantity Distributed(KG)</th>
+                            <th>Distribution Date</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <% records.forEach(function(record) { %>
+                            <tr>
+                              <td><%= record.item_name %></td>
+                              <td><%= record.Quantity_distributed %></td>
+                              <td><%= record.distribution_date %></td>
+                            </tr>
+                          <% }); %>
+                        </tbody>
+                      </table>
+                    <% } else { %>
+                      <p>No distribution records available for this beneficiary.</p>
+                    <% } %>
+                  
             </div>
         </div>
     </div>
@@ -328,35 +402,37 @@
     <script>
         document.getElementById('eligibilityForm').addEventListener('submit', async function (event) {
             event.preventDefault(); // Prevent the default form submission
-
-            const formData = new FormData(this); // Gather the form data
+        
+            const formData = {
+                annual_income: this.annual_income.value,
+                occupation: this.occupation.value
+            };
+        
             const response = await fetch('/eligibility_verification', {
                 method: 'POST',
-                body: formData,
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(formData),
             });
-
+        
             const result = await response.json(); // Parse the JSON response
-
+        
             // Display the response in the modal
             const modalMessage = document.getElementById('modalMessage');
             const modal = document.getElementById('modal');
-
+        
             if (result.success) {
-                // Show existing verification status
-                modalMessage.textContent = result.message + 
-                    (result.verification_status ? ` Status: ${result.verification_status}` : '') + 
+                modalMessage.textContent = result.message +
+                    (result.verification_status ? ` Status: ${result.verification_status}` : '') +
                     ` Verified: ${result.verified}`;
             } else {
                 modalMessage.textContent = result.message;
             }
-
+        
             modal.style.display = 'block'; // Show the modal
         });
-
-        // Close the modal
-        document.getElementById('closeModal').addEventListener('click', function() {
-            document.getElementById('modal').style.display = 'none';
-        });
+        
     </script>
     <script>
         function showPanel(panelId) {

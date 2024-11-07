@@ -38,6 +38,11 @@ create TABLE complaint (
     complaint_time datetime default current_timestamp(),
     foreign key(ben_id) references beneficiary(ben_id)
 );
+ALTER TABLE complaint
+ADD COLUMN status varchar(45) default 'pending';
+ALTER TABLE complaint
+ADD COLUMN fps_id INT,
+ADD CONSTRAINT fk_fps_id FOREIGN KEY (fps_id) REFERENCES fps(fps_id);
 CREATE TABLE ration_card (
     ration_no varchar(20) primary key,
     ben_id INT,
@@ -100,4 +105,28 @@ CREATE TABLE notification (
     fps_id INT,
     message VARCHAR(100),
     timesent TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+CREATE TABLE record (
+    rec_ID INT PRIMARY KEY,
+    ben_ID INT,
+    fps_id INT,
+    item_name VARCHAR(255),
+    Quantity_distributed INT,
+    distribution_date DATE,
+    
+    
+    FOREIGN KEY (ben_ID) REFERENCES Beneficiary(ben_ID),
+    FOREIGN KEY (fps_id) REFERENCES fps(fps_id)
+);
+CREATE TABLE record (
+    rec_ID INT auto_increment PRIMARY KEY,
+    ben_ID INT,
+    fps_id INT,
+    item_name VARCHAR(255),
+    Quantity_distributed INT,
+    distribution_date DATE,
+    
+    
+    FOREIGN KEY (ben_ID) REFERENCES Beneficiary(ben_ID),
+    FOREIGN KEY (fps_id) REFERENCES fps(fps_id)
 );

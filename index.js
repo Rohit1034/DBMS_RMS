@@ -86,7 +86,9 @@ app.get('/dashboard', async (req, res) => {
   if (!req.session.ben_id) {
     return res.redirect('/');
   }
+
   try {
+    // Fetch the ration card data for the logged-in beneficiary
     const [rows] = await db.query(
       'SELECT ration_no, expiry, card_type, member_count FROM ration_card WHERE ben_id = ?',
       [req.session.ben_id]
@@ -97,17 +99,26 @@ app.get('/dashboard', async (req, res) => {
     }
 
     const cardData = rows[0];
+
+    // Fetch the distribution records for the logged-in beneficiary
+    const [records] = await db.query(
+      'SELECT item_name, Quantity_distributed, distribution_date FROM record WHERE ben_ID = ?',
+      [req.session.ben_id]
+    );
+
     res.render('dashboard', {
       card_no: cardData.ration_no,
       expiry: cardData.expiry,
       card_type: cardData.card_type,
-      member_no: cardData.member_count
+      member_no: cardData.member_count,
+      records: records // Pass the record data to the template
     });
   } catch (err) {
     console.error("Database query error:", err);
     res.status(500).send("Internal server error");
   }
 });
+
 
 app.get('/fps_dashboard', async (req, res) => {
   console.log(req.session); // Log session data for debugging
@@ -131,7 +142,15 @@ app.get('/fps_dashboard', async (req, res) => {
     const [eligibilityRows] = await db.query(
       'SELECT ben_id, annual_income, occupation, verification_status, verified FROM eligibility'
     );
-
+    const [complaintsRows] = await db.query(
+      'SELECT complaint_ID, complaint_type, description_complaint,status FROM complaint WHERE fps_id = ?',
+      [req.session.fps_id] // Assuming complaints are linked to a specific FPS by `fps_id`
+    );
+    // complaint_ID int  AUTO_INCREMENT primary key,
+    // ben_id int,
+    // complaint_type VARCHAR(200) NOT NULL, 
+    // description_complaint VARCHAR(1000) NOT NULL,
+    // complaint_time datetime default current_timestamp(),
     // Render the template with both fpsData and eligibility data
     res.render('fps_dashboard', {
       shop_name: fpsData.shop_name,
@@ -140,7 +159,8 @@ app.get('/fps_dashboard', async (req, res) => {
       lname: fpsData.lname,
       contact: fpsData.contact,
       fps_id: req.session.fps_id,
-      eligibilityRecords: eligibilityRows // Pass eligibility data to the template
+      eligibilityRecords: eligibilityRows,
+      complaintsRows:complaintsRows // Pass eligibility data to the template
     });
   } catch (err) {
     console.error("Database query error:", err);
@@ -291,12 +311,25 @@ app.post('/add_member', async (req, res) => {
     const query = 'INSERT INTO family_members (ben_id, name, dob, aadhaar_number, relationship) VALUES (?, ?, ?, ?, ?)';
     await db.query(query, [req.session.ben_id, name, dob, aadhar, relationship]);
 
-    // Update the member_count in the beneficiary table
-    const updateBeneficiaryQuery = 'UPDATE beneficiary SET member_count = member_count + 1 WHERE ben_id = ?';
+    // Update the member_count in the beneficiary table based on actual member count in family_members
+    const updateBeneficiaryQuery = `
+      UPDATE beneficiary b
+      JOIN (SELECT ben_id, COUNT(*) AS member_count FROM family_members GROUP BY ben_id) fm
+      ON b.ben_id = fm.ben_id
+      SET b.member_count = fm.member_count+1  
+      WHERE b.ben_id = ?;
+    `;
     await db.query(updateBeneficiaryQuery, [req.session.ben_id]);
-    // Update member_count in the ration_card table
-    const updateCountQuery = 'UPDATE ration_card SET member_count = member_count + 1 WHERE ben_id = ?';
-    await db.query(updateCountQuery, [req.session.ben_id]);
+
+    // Update the member_count in the ration_card table based on actual member count in family_members
+    const updateRationCardQuery = `
+      UPDATE ration_card r
+      JOIN (SELECT ben_id, COUNT(*) AS member_count FROM family_members GROUP BY ben_id) fm
+      ON r.ben_id = fm.ben_id
+      SET r.member_count = fm.member_count+1
+      WHERE r.ben_id = ?;
+    `;
+    await db.query(updateRationCardQuery, [req.session.ben_id]);
 
     res.redirect('/dashboard');
   } catch (err) {
@@ -304,6 +337,7 @@ app.post('/add_member', async (req, res) => {
     res.redirect('/dashboard');
   }
 });
+
 // New complaint GET
 app.get('/new_complaint', (req, res) => {
   if (!req.session.ben_id) {
@@ -314,23 +348,25 @@ app.get('/new_complaint', (req, res) => {
 
 // New complaint POST
 app.post('/new_complaint', async (req, res) => {
-  const { complaint_type, description_complaint } = req.body;
+  const { complaint_type, description_complaint,fps_id } = req.body;
 
-  if (!complaint_type || !description_complaint) {
+  if (!complaint_type || !description_complaint ||!fps_id) {
     return res.status(400).send("Please fill the above values properly!");
   }
 
   try {
-    const query = 'INSERT INTO complaint (ben_id, complaint_type, description_complaint) VALUES (?, ?, ?)';
-    await db.query(query, [req.session.ben_id, complaint_type, description_complaint]);
+    const query = 'INSERT INTO complaint (ben_id, complaint_type, description_complaint,fps_id) VALUES (?, ?, ?,?)';
+    await db.query(query, [req.session.ben_id, complaint_type, description_complaint,fps_id]);
     
-    res.send("Complaint sent successfully!");
+    res.redirect('/dashboard')
   } catch (err) {
     console.error("Error inserting data: ", err);
     res.status(500).send("Database error");
   }  
 });
-
+app.get('/new',(req,res)=>{
+  res.sendFile(path.join(__dirname, 'view', 'register.html'));
+})
 app.get('/eligibility_verification',(req,res)=>{
   res.redirect('/dashboard');
 })
@@ -344,11 +380,11 @@ app.post('/eligibility_verification', async (req, res) => {
 
   try {
       const benId = req.session.ben_id;
-
+      console.log(benId, annual_income, occupation);
       // Step 1: Check if the ben_id already exists in the database
       const checkQuery = `SELECT verification_status, verified FROM eligibility WHERE ben_id = ?`;
       const [existingRecords] = await db.query(checkQuery, [benId]);
-
+  
       // Step 2: If ben_id exists, return the verification status
       if (existingRecords.length > 0) {
           const { verification_status, verified } = existingRecords[0];
@@ -433,6 +469,63 @@ app.get('/get_members', async (req, res) => {
       res.json(rows);
   } catch (err) {
       console.error("Database query error:", err);
+      res.status(500).send("Internal server error");
+  }
+});
+app.post('/add_record', async (req, res) => {
+  const { ben_id, item_name, quantity_distributed, distribution_date } = req.body;
+
+  // Ensure that fps_id exists in the session
+  if (!req.session.fps_id) {
+    return res.status(401).json({ success: false, message: 'Unauthorized: No FPS ID found in session.' });
+  }
+
+  try {
+    // Check if the ben_id exists in the beneficiary table
+    const [benRows] = await db.query('SELECT ben_id FROM beneficiary WHERE ben_id = ?', [ben_id]);
+
+    if (benRows.length === 0) {
+      // If ben_id does not exist, redirect to the record panel with an error message
+      return res.redirect('/fps_dashboard?error=Beneficiary ID does not exist');  
+    }
+
+    // Proceed with inserting the record if ben_id exists
+    const query = `
+      INSERT INTO record (ben_ID, fps_id, item_name, Quantity_distributed, distribution_date)
+      VALUES (?, ?, ?, ?, ?)
+    `;
+
+    await db.query(query, [
+      ben_id,                // Beneficiary ID from the form
+      req.session.fps_id,    // FPS ID from the session
+      item_name,             // Item name from the form
+      quantity_distributed,  // Quantity distributed from the form
+      distribution_date      // Distribution date from the form
+    ]);
+
+    // Redirect to the stock page or wherever after successful insertion
+    return res.redirect('/fps_dashboard?message=added successfully');
+  } catch (err) {
+    console.error('Error processing request:', err);
+    res.status(500).json({ success: false, message: 'Database error' });
+  }
+});
+// Route to handle updating complaint status
+app.post('/update_complaint_status/:complaint_id', async (req, res) => {
+  const { status } = req.body;
+  const { complaint_id } = req.params;
+
+  try {
+      // Update the status of the complaint in the database
+      const result = await db.query(
+          'UPDATE complaint SET status = ? WHERE complaint_ID = ?',
+          [status, complaint_id]
+      );
+
+      // Redirect back to the dashboard after updating
+      res.redirect('/fps_dashboard');
+  } catch (err) {
+      console.error("Error updating complaint status:", err);
       res.status(500).send("Internal server error");
   }
 });
