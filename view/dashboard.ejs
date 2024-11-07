@@ -226,6 +226,36 @@
           }
         }
       </style>
+      <style>
+        /* Table styling */
+#notifications table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+    font-family: Arial, sans-serif;
+    color: #333;
+}
+
+#notifications th, #notifications td {
+    padding: 12px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+}
+
+#notifications th {
+    background-color: #004d4d;
+    color: white;
+}
+
+#notifications tr:nth-child(even) {
+    background-color: #f2f2f2;
+}
+
+#notifications tr:hover {
+    background-color: #ddd;
+}
+
+      </style>
 </head>
 <body>
     <div class="main-panel">
@@ -321,8 +351,28 @@
             </div>
             <div id="notifications" class="panel-section">
                 <h2>Notifications</h2>
-                <p>There are currently no notifications.</p>
+                <% if (notifications.length > 0) { %>
+                    <table style="width: 100%; border-collapse: collapse;">
+                        <thead>
+                            <tr style="background-color: #f2f2f2;">
+                                <th style="border: 1px solid #ddd; padding: 8px; text-align: left;">Message</th>
+                                <th style="border: 1px solid #ddd; padding: 8px; text-align: left;">Time</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% notifications.forEach(notification => { %>
+                                <tr>
+                                    <td style="border: 1px solid #ddd; padding: 8px;"><%= notification.message %></td>
+                                    <td style="border: 1px solid #ddd; padding: 8px;"><%= new Date(notification.notification_time).toLocaleString() %></td>
+                                </tr>
+                            <% }) %>
+                        </tbody>
+                    </table>
+                <% } else { %>
+                    <p>There are currently no notifications.</p>
+                <% } %>
             </div>
+            
 
             <div id="records" class="panel-section">
                 

@@ -106,18 +106,26 @@ app.get('/dashboard', async (req, res) => {
       [req.session.ben_id]
     );
 
+    // Fetch the notifications for the logged-in beneficiary
+    const [notifications] = await db.query(
+      'SELECT message, timesent FROM notification WHERE ben_id = ? ORDER BY timesent DESC',
+      [req.session.ben_id]
+    );
+
     res.render('dashboard', {
       card_no: cardData.ration_no,
       expiry: cardData.expiry,
       card_type: cardData.card_type,
       member_no: cardData.member_count,
-      records: records // Pass the record data to the template
+      records: records,
+      notifications: notifications // Pass the notification data to the template
     });
   } catch (err) {
     console.error("Database query error:", err);
     res.status(500).send("Internal server error");
   }
 });
+
 
 
 app.get('/fps_dashboard', async (req, res) => {
@@ -168,22 +176,33 @@ app.get('/fps_dashboard', async (req, res) => {
   }
 });
 app.post('/verify_eligibility', async (req, res) => {
-    const { ben_id, verification_status, verified } = req.body;
+  const { ben_id, verification_status, verified } = req.body;
 
-    try {
-        // Update the verification status and verified field
-        const result = await db.query(
-            'UPDATE eligibility SET verification_status = ?, verified = ? WHERE ben_id = ?',
-            [verification_status, verified === 'true', ben_id] // Convert 'true'/'false' to boolean
-        );
+  try {
+      // Update the verification status and verified field
+      const result = await db.query(
+          'UPDATE eligibility SET verification_status = ?, verified = ? WHERE ben_id = ?',
+          [verification_status, verified === 'true', ben_id] // Convert 'true'/'false' to boolean
+      );
 
-        // Redirect back to the dashboard after updating
-        res.redirect('/fps_dashboard');
-    } catch (err) {
-        console.error(err);
-        res.send('Error updating verification status');
-    }
+      // Insert a notification message
+      const message = `Verification status for Beneficiary ID ${ben_id} has been updated to: ${verification_status}.`;
+
+      // Insert the notification for this action
+      await db.query(
+          'INSERT INTO notification (ben_id, fps_id, message) VALUES (?, ?, ?)',
+          [ben_id, req.session.fps_id, message]
+      );
+
+      // Redirect back to the dashboard after updating
+      res.redirect('/fps_dashboard');
+  } catch (err) {
+      console.error(err);
+      res.send('Error updating verification status');
+  }
 });
+
+
 
 
 
@@ -424,10 +443,33 @@ app.post('/add_stock', async (req, res) => {
   }
 
   try {
+    // Insert the stock data into the stock table
     const query = 'INSERT INTO stock (stock_name, fps_id, quantity, stock_date) VALUES (?, ?, ?, ?)';
-    
-    // Insert the stock data into the database
     await db.query(query, [stock_name, req.session.fps_id, quantity, stock_date]);
+
+    // Get the fps details (shop_name, contact, address) for the given fps_id
+    const [fpsDetails] = await db.query(
+      'SELECT shop_name, contact, CONCAT(street, ", ", city, ", ", state, ", ", pincode) AS address FROM fps WHERE fps_id = ?',
+      [req.session.fps_id]
+    );
+
+    if (fpsDetails.length === 0) {
+      return res.status(404).json({ success: false, message: 'FPS details not found' });
+    }
+
+    // Prepare the notification message
+    const message = `${stock_name} added to ${fpsDetails[0].shop_name} located at ${fpsDetails[0].address} contact number ${fpsDetails[0].contact}. Go and collect it!`;
+
+    // Get all ben_id from the beneficiary table to notify each one
+    const [benRows] = await db.query('SELECT ben_id FROM beneficiary');
+    
+    // Insert a notification for each ben_id
+    for (const row of benRows) {
+      await db.query(
+        'INSERT INTO notification (ben_id, fps_id, message) VALUES (?, ?, ?)',
+        [row.ben_id, req.session.fps_id, message]
+      );
+    }
 
     // Redirect on success
     res.redirect('/added_stock');
@@ -436,6 +478,7 @@ app.post('/add_stock', async (req, res) => {
     res.status(500).json({ success: false, message: 'Database error' });
   }
 });
+
 
 
 //show members
@@ -503,23 +546,64 @@ app.post('/add_record', async (req, res) => {
       distribution_date      // Distribution date from the form
     ]);
 
-    // Redirect to the stock page or wherever after successful insertion
-    return res.redirect('/fps_dashboard?message=added successfully');
+    // Insert a notification after the record has been added
+    const message = `A new record has been added for Item: ${item_name}, Quantity: ${quantity_distributed}.`;
+
+    await db.query(
+      'INSERT INTO notification (ben_id, fps_id, message) VALUES (?, ?, ?)',
+      [ben_id, req.session.fps_id, message]
+    );
+
+    // Redirect to the dashboard with a success message
+    return res.redirect('/fps_dashboard?message=Record added and notification sent successfully');
   } catch (err) {
     console.error('Error processing request:', err);
     res.status(500).json({ success: false, message: 'Database error' });
   }
 });
+
 // Route to handle updating complaint status
 app.post('/update_complaint_status/:complaint_id', async (req, res) => {
   const { status } = req.body;
   const { complaint_id } = req.params;
 
+  console.log('Complaint ID:', complaint_id); // Debugging: Check the complaint_id passed
+
   try {
+      // Get the complaint details (assuming you want to get ben_id and fps_id from the complaint)
+      const complaintResult = await db.query('SELECT ben_id, fps_id FROM complaint WHERE complaint_ID = ?', [complaint_id]);
+
+      console.log('complaintResult:', complaintResult); // Log the result of the query
+
+      if (complaintResult.length === 0) {
+          return res.status(404).send('Complaint not found');
+      }
+
+      // Access the first item of complaintResult which contains the actual data
+      const complaint = complaintResult[0][0]; // The first item of the array is an object with ben_id and fps_id
+
+      // Destructure ben_id and fps_id from the complaint object
+      const { ben_id, fps_id } = complaint;
+
+      console.log('ben_id:', ben_id, 'fps_id:', fps_id); // Log the ben_id and fps_id
+
+      // Check if ben_id or fps_id are null or undefined
+      if (!ben_id || !fps_id) {
+          return res.status(400).send('Complaint does not have valid ben_id or fps_id');
+      }
+
       // Update the status of the complaint in the database
-      const result = await db.query(
+      await db.query(
           'UPDATE complaint SET status = ? WHERE complaint_ID = ?',
           [status, complaint_id]
+      );
+
+      // Insert a notification message
+      const message = `Complaint status updated to: ${status}`;
+
+      await db.query(
+          'INSERT INTO notification (ben_id, fps_id, message) VALUES (?, ?, ?)',
+          [ben_id, fps_id, message]
       );
 
       // Redirect back to the dashboard after updating
@@ -529,6 +613,8 @@ app.post('/update_complaint_status/:complaint_id', async (req, res) => {
       res.status(500).send("Internal server error");
   }
 });
+
+
 
 // Forgot password page
 app.get('/forgot', (req, res) => {

@@ -103,7 +103,7 @@ CREATE TABLE notification (
     notification INT PRIMARY KEY,
     ben_id INT,
     fps_id INT,
-    message VARCHAR(100),
+    message VARCHAR(255),
     timesent TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 CREATE TABLE record (
