@@ -6,9 +6,99 @@
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <title>New Registration &mdash; Bootstrap 4 Login Page Snippet</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-    <link rel="stylesheet" href="../public/css/my-login.css">
+    <style>
+        /* Background and layout styling */
+        body.my-login-page {
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            font-size: 14px;
+            margin: 0;
+            padding: 0;
+            background: #112f4e;
+        }
+        
+        body.my-login-page::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('https://img.freepik.com/free-vector/geometric-gradient-futuristic-background_23-2149116406.jpg') center/cover no-repeat;
+            opacity: 0.3; /* Makes the background translucent */
+            z-index: -1;
+        }
+
+        .card-wrapper {
+            width: 100%;
+            max-width: 500px;
+            padding: 20px;
+        }
+
+        .card {
+            border: none;
+            border-radius: 15px;
+            background-color: rgba(255, 255, 255, 0.9);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+        }
+
+        .card .card-title {
+            margin-bottom: 20px;
+            color: #4A4A4A;
+            text-align: center;
+            font-weight: 600;
+        }
+
+        /* Form control and button styling */
+        .form-control {
+            border-radius: 8px;
+            background-color: #FAFAFA;
+            color: #333;
+            padding: 10px;
+            margin-bottom: 15px;
+        }
+
+        .btn-primary {
+            background-color: #4A90E2;
+            border: none;
+            padding: 10px;
+            font-weight: 600;
+            border-radius: 8px;
+            transition: background-color 0.3s;
+        }
+
+        .btn-primary:hover {
+            background-color: #357ABD;
+        }
+
+        .custom-control-label, .card a {
+            color: #4A4A4A;
+            font-size: 14px;
+        }
+
+        .custom-checkbox .custom-control-input:checked ~ .custom-control-label::before {
+            background-color: #4A90E2;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 425px) {
+            .card-wrapper {
+                width: 90%;
+            }
+        }
+
+        @media (max-width: 320px) {
+            .card {
+                padding: 15px;
+            }
+        }
+    </style>
 </head>
-<body class="my-login-page" style="background-image: url(https://fatafatnews.com/wp-content/uploads/2024/08/22032023-1679475025-768x432.jpg);">
+<body class="my-login-page" >
     <section class="h-100">
         <div class="container h-100">
             <div class="row justify-content-md-center h-100">
@@ -17,13 +107,13 @@
                         <img src="../public/assets/logo.jpg" alt="bootstrap 4 login page">
                     </div>
                     <div class="card fat">
-                        <div class="card-body" style="background-color:rgb(237, 125, 27);">
+                        <div class="card-body" >
                             <h4 class="card-title">Register</h4>
                             <form id="register" action="/register_fps" method="POST" class="my-login-validation" novalidate="">
                                 <div class="form-group">
                                     <label for="name">Name</label>
                                     <div class="fullname">
-                                        <input id="fname" type="text" class="form-control" name="fname" placeholder="First name" style="background-color: blanchedalmond;" required>
+                                        <input id="fname" type="text" class="form-control" name="fname" placeholder="First name"  required>
                                         <input id="mname" type="text" class="form-control" name="mname" placeholder="Middle name">
                                         <input id="lname" type="text" class="form-control" name="lname" placeholder="Surname" required>
                                     </div>

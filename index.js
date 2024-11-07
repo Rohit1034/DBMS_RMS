@@ -326,16 +326,16 @@ app.post('/register_fps', async (req, res) => {
 });
 
 app.post('/add_member', async (req, res) => {
-  const { name, dob, aadhar, relationship } = req.body;
-
-  if (!name || !dob || !aadhar || !relationship) {
+  const { name, dob, aadhaar_number, relationship } = req.body;
+  console.log(name, dob, aadhaar_number, relationship );
+  if (!name || !dob || !aadhaar_number || !relationship) {
     return res.status(400).send("Please fill all required fields properly!");
   }
 
   try {
     // Insert member into the family_members table
     const query = 'INSERT INTO family_members (ben_id, name, dob, aadhaar_number, relationship) VALUES (?, ?, ?, ?, ?)';
-    await db.query(query, [req.session.ben_id, name, dob, aadhaar, relationship]);
+    await db.query(query, [req.session.ben_id, name, dob, aadhaar_number, relationship]);
 
     // Update the member_count in the beneficiary table based on actual member count in family_members
     const updateBeneficiaryQuery = `

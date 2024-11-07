@@ -3,61 +3,142 @@
 <head>
     <meta charset="utf-8">
     <meta name="author" content="Kodinger">
-    <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>New Registration &mdash; Bootstrap 4 Login Page Snippet</title>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-    <link rel="stylesheet" href="../public/css/my-login.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Register</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" 
+          integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" 
+          crossorigin="anonymous">
+    
+    <style>
+        /* Background and layout styling */
+        body.my-login-page {
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            font-size: 14px;
+            margin: 0;
+            padding: 0;
+            background: #112f4e;
+        }
+        
+        body.my-login-page::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('https://img.freepik.com/free-vector/geometric-gradient-futuristic-background_23-2149116406.jpg') center/cover no-repeat;
+            opacity: 0.3; /* Makes the background translucent */
+            z-index: -1;
+        }
+
+        .card-wrapper {
+            width: 100%;
+            max-width: 500px;
+            padding: 20px;
+        }
+
+        .card {
+            border: none;
+            border-radius: 15px;
+            background-color: rgba(255, 255, 255, 0.9);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+        }
+
+        .card .card-title {
+            margin-bottom: 20px;
+            color: #4A4A4A;
+            text-align: center;
+            font-weight: 600;
+        }
+
+        /* Form control and button styling */
+        .form-control {
+            border-radius: 8px;
+            background-color: #FAFAFA;
+            color: #333;
+            padding: 10px;
+            margin-bottom: 15px;
+        }
+
+        .btn-primary {
+            background-color: #4A90E2;
+            border: none;
+            padding: 10px;
+            font-weight: 600;
+            border-radius: 8px;
+            transition: background-color 0.3s;
+        }
+
+        .btn-primary:hover {
+            background-color: #357ABD;
+        }
+
+        .custom-control-label, .card a {
+            color: #4A4A4A;
+            font-size: 14px;
+        }
+
+        .custom-checkbox .custom-control-input:checked ~ .custom-control-label::before {
+            background-color: #4A90E2;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 425px) {
+            .card-wrapper {
+                width: 90%;
+            }
+        }
+
+        @media (max-width: 320px) {
+            .card {
+                padding: 15px;
+            }
+        }
+    </style>
 </head>
-<body class="my-login-page" style="background-image: url(https://fatafatnews.com/wp-content/uploads/2024/08/22032023-1679475025-768x432.jpg);">
+<body class="my-login-page">
     <section class="h-100">
         <div class="container h-100">
-            <div class="row justify-content-md-center h-100">
+            <div class="row justify-content-center h-100">
                 <div class="card-wrapper">
-                    <div class="brand">
-                        <img src="../public/assets/logo.jpg" alt="bootstrap 4 login page">
-                    </div>
                     <div class="card fat">
-                        <div class="card-body" style="background-color:rgb(237, 125, 27);">
+                        <div class="card-body">
                             <h4 class="card-title">Register</h4>
                             <form id="register" action="/register" method="POST" class="my-login-validation" novalidate="">
                                 <div class="form-group">
                                     <label for="name">Name</label>
-                                    <div class="fullname">
-                                        <input id="fname" type="text" class="form-control" name="fname" placeholder="First name" style="background-color: blanchedalmond;" required>
-                                        <input id="mname" type="text" class="form-control" name="mname" placeholder="Middle name">
-                                        <input id="lname" type="text" class="form-control" name="lname" placeholder="Surname" required>
-                                    </div>
+                                    <input id="fname" type="text" class="form-control" name="fname" placeholder="First name" required>
+                                    <input id="mname" type="text" class="form-control" name="mname" placeholder="Middle name">
+                                    <input id="lname" type="text" class="form-control" name="lname" placeholder="Surname" required>
                                 </div>
-
                                 <div class="form-group">
                                     <label for="email">E-Mail Address</label>
-                                    <input id="email" type="email" class="form-control" name="email" placeholder="email-address" required>
+                                    <input id="email" type="email" class="form-control" name="email" placeholder="abc@gmail.com" required>
                                 </div>
-
                                 <div class="form-group">
                                     <label for="password">Set Password</label>
-                                    <input id="password" type="password" class="form-control" name="password" placeholder="password" required>
+                                    <input id="password" type="password" class="form-control" name="password" required>
                                 </div>
-                                
                                 <div class="form-group">
                                     <label for="ration_no">Ration Card Number</label>
-                                    <input id="ration_no" type="text" class="form-control" name="ration_no" placeholder="Enter ration card number" required>
+                                    <input id="ration_no" type="text" class="form-control" name="ration_no" placeholder="Enter Ration Card number" required>
                                 </div>
                                 <div class="form-group">
-                                    <label for="">Aadhaar_number</label>
-                                    <input id="aadhaar_number" type="text" class="form-control" name="aadhaar_number" placeholder="Enter aadhaar_number" required>
+                                    <label for="aadhaar_number">Aadhaar Number</label>
+                                    <input id="aadhaar_number" type="text" class="form-control" name="aadhaar_number" placeholder="Enter Aadhaar number" required>
                                 </div>
-
                                 <div class="form-group">
-                                    <label for="Address">Address</label>
-                                    <div class="address">
-                                        <input id="city" type="text" class="form-control" name="city" placeholder="City" required>
-                                        <input id="street" type="text" class="form-control" name="street" placeholder="Street" required>
-                                        <input id="state" type="text" class="form-control" name="state" placeholder="State" required>
-                                        <input id="pincode" type="text" class="form-control" name="pincode" placeholder="Pincode" required>
-                                    </div>
+                                    <label for="address">Address</label>
+                                    <input id="city" type="text" class="form-control" name="city" placeholder="City" required>
+                                    <input id="street" type="text" class="form-control" name="street" placeholder="Street" required>
+                                    <input id="state" type="text" class="form-control" name="state" placeholder="State" required>
+                                    <input id="pincode" type="text" class="form-control" name="pincode" placeholder="Pincode" required>
                                 </div>
-
                                 <div class="form-group">
                                     <label for="dob">Date of Birth</label>
                                     <input id="dob" type="date" class="form-control" name="dob" required>
@@ -72,29 +153,25 @@
                                     </select>
                                 </div>
                                 <div class="form-group">
-                                    <label for="card_type">CARD TYPE</label>
+                                    <label for="card_type">Card Type</label>
                                     <select id="card_type" name="card_type" class="form-control" required>
                                         <option value="">Select</option>
                                         <option value="Yellow">Yellow</option>
                                         <option value="Orange">Orange</option>
                                         <option value="Saffron">Saffron</option>
-                                    </select>                               
+                                    </select>
                                 </div>
                                 <div class="form-group">
                                     <div class="custom-checkbox custom-control">
                                         <input type="checkbox" name="agree" id="agree" class="custom-control-input" required>
-                                        <label for="agree" class="custom-control-label">I agree to the <a href='/#'>terms and conditions</a></label>
-                                        <div class="invalid-feedback">
-                                            You must agree with our Terms and Conditions.
-                                        </div>
+                                        <label for="agree" class="custom-control-label">I agree to the <a href='#'>terms and conditions</a></label>
                                     </div>
                                 </div>
-
                                 <div class="form-group m-0">
                                     <button type="submit" class="btn btn-primary btn-block">Register</button>
                                 </div>
                                 <div class="mt-4 text-center">
-                                    Already have an account? <a href='/'>login here</a>
+                                    Already have an account? <a href="/">Login here</a>
                                 </div>
                             </form>
                         </div>
@@ -103,9 +180,5 @@
             </div>
         </div>
     </section>
-
-    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
-    <script src="../index.js"></script>
 </body>
 </html>
